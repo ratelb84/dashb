@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weekly Multi-Client Account Control Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f5f7fa;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .nav-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .nav-btn {
+            padding: 20px;
+            background: white;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .nav-btn:hover {
+            border-color: #007bff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .nav-btn.active {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .nav-btn-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .nav-btn-desc {
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        .nav-btn.active .nav-btn-desc {
+            color: #e3f2fd;
+        }
+
+        .section {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #1a1a1a;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .week-selector {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .week-selector input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .section {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .section-title {
+            flex: 1;
+        }
+
+        h2 {
+            color: #2c3e50;
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+
+        .section-purpose {
+            color: #6c757d;
+            font-size: 14px;
+            font-style: italic;
+            margin-top: 5px;
+        }
+
+        .section-question {
+            background: #f8f9fa;
+            padding: 12px 15px;
+            border-left: 4px solid #007bff;
+            margin-top: 15px;
+            border-radius: 4px;
+            font-weight: 500;
+            color: #495057;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th {
+            background: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #495057;
+            border-bottom: 2px solid #dee2e6;
+            font-size: 14px;
+        }
+
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        input[type="text"], select, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 40px;
+        }
+
+        select {
+            cursor: pointer;
+            background: white;
+        }
+
+        .status-indicator {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: inline-block;
+            cursor: pointer;
+            border: 2px solid #ddd;
+        }
+
+        .status-green { background: #28a745; border-color: #28a745; }
+        .status-amber { background: #ffc107; border-color: #ffc107; }
+        .status-red { background: #dc3545; border-color: #dc3545; }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            margin-left: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .traffic-light-cell {
+            text-align: center;
+        }
+
+        .rules {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        .rules strong {
+            display: block;
+            margin-bottom: 5px;
+            color: #856404;
+        }
+
+        .rules ul {
+            margin-left: 20px;
+            color: #856404;
+        }
+
+        .rules li {
+            margin: 3px 0;
+            font-size: 14px;
+        }
+
+        .export-section {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .commitment-status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-complete { background: #d4edda; color: #155724; }
+        .status-missed { background: #f8d7da; color: #721c24; }
+        .status-pending { background: #fff3cd; color: #856404; }
+
+        .client-group-header {
+            background: #e9ecef;
+            font-weight: 700;
+            font-size: 15px;
+            color: #495057;
+        }
+
+        .client-group-header td {
+            padding: 12px !important;
+            border-top: 2px solid #dee2e6;
+        }
+
+        .campaign-row td:first-child {
+            padding-left: 40px;
+            color: #6c757d;
+        }
+
+        @media print {
+            body { background: white; }
+            .section { box-shadow: none; page-break-inside: avoid; }
+            .btn { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 Weekly Multi-Client Account Control Dashboard</h1>
+            <p style="color: #6c757d; margin-top: 5px;">15-30 minutes total for all clients</p>
+            <div class="week-selector">
+                <label><strong>Week of:</strong></label>
+                <input type="date" id="weekDate" />
+                <button class="btn btn-success" onclick="saveData()">💾 Save to Google Sheets</button>
+                <button class="btn btn-primary" onclick="loadDataFromSheets()">🔄 Load from Sheets</button>
+                <button class="btn btn-secondary" onclick="exportData()">📥 Export JSON</button>
+                <button class="btn btn-secondary" onclick="window.print()">🖨️ Print</button>
+            </div>
+        </header>
+
+        <!-- Navigation Buttons -->
+        <div class="nav-buttons">
+            <div class="nav-btn active" onclick="showSection('summary')">
+                <div class="nav-btn-title">📈 Historical Trends</div>
+                <div class="nav-btn-desc">Week-by-week view</div>
+            </div>
+            <div class="nav-btn" onclick="showSection('portfolio')">
+                <div class="nav-btn-title">Portfolio Health</div>
+                <div class="nav-btn-desc">Traffic light overview</div>
+            </div>
+            <div class="nav-btn" onclick="showSection('exceptions')">
+                <div class="nav-btn-title">Exceptions</div>
+                <div class="nav-btn-desc">Issues to fix this week</div>
+            </div>
+            <div class="nav-btn" onclick="showSection('risks')">
+                <div class="nav-btn-title">Risks</div>
+                <div class="nav-btn-desc">Early warning log</div>
+            </div>
+            <div class="nav-btn" onclick="showSection('relationships')">
+                <div class="nav-btn-title">Relationships</div>
+                <div class="nav-btn-desc">Temperature check</div>
+            </div>
+            <div class="nav-btn" onclick="showSection('growth')">
+                <div class="nav-btn-title">Growth</div>
+                <div class="nav-btn-desc">Commercial movement</div>
+            </div>
+            <div class="nav-btn" onclick="showSection('commitments')">
+                <div class="nav-btn-title">Commitments</div>
+                <div class="nav-btn-desc">Accountability & escalations</div>
+            </div>
+        </div>
+
+        <!-- SUMMARY PAGE: Historical Trends -->
+        <div class="section active" id="summary">
+            <div class="section-header">
+                <div class="section-title">
+                    <h2>📈 Historical Trends Summary</h2>
+                    <div class="section-purpose">Week-by-week portfolio health across all clients</div>
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="margin-right: 10px;"><strong>View by:</strong></label>
+                <select id="summaryView" onchange="renderSummaryView()" style="width: auto; display: inline-block;">
+                    <option value="client">By Client (all campaigns grouped)</option>
+                    <option value="campaign">By Campaign (individual trends)</option>
+                    <option value="week">By Week (all clients & campaigns)</option>
+                </select>
+                <button class="btn btn-secondary" onclick="clearHistory()" style="margin-left: 20px;">🗑️ Clear History</button>
+            </div>
+
+            <div id="summaryContent"></div>
+
+            <div class="section-question">
+                "How have our clients been trending over time?"
+            </div>
+        </div>
+
+        <!-- PAGE 1: Portfolio Health Overview -->
+        <div class="section" id="portfolio">
+            <div class="section-header">
+                <div class="section-title">
+                    <h2>PAGE 1: Portfolio Health Overview (All Clients)</h2>
+                    <div class="section-purpose">Where should your attention go this week?</div>
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 15px; display: flex; gap: 10px; align-items: center;">
+                <label><strong>View:</strong></label>
+                <select id="portfolioViewMode" onchange="renderPortfolioTable()" style="width: auto;">
+                    <option value="all">All Campaigns (Flat View)</option>
+                    <option value="grouped">Grouped by Client</option>
+                </select>
+            </div>
+
+            <table id="portfolioTable">
+                <thead>
+                    <tr>
+                        <th>Client</th>
+                        <th>Campaign</th>
+                        <th style="text-align: center;">Commercial</th>
+                        <th style="text-align: center;">Ops</th>
+                        <th style="text-align: center;">Relationship</th>
+                        <th style="text-align: center;">Growth</th>
+                        <th style="text-align: center;">Overall</th>
+                        <th style="width: 80px;"></th>
+                    </tr>
+                </thead>
+                <tbody id="portfolioBody">
+                </tbody>
+            </table>
+            
+            <div class="action-buttons">
+                <button class="btn btn-success" onclick="addPortfolioRow()">+ Add Client</button>
+            </div>
+
+            <div class="rules">
+                <strong>Rules:</strong>
+                <ul>
+                    <li>Traffic lights must change week-to-week if reality changes</li>
+                    <li>No explanation here — just signal</li>
+                </ul>
+            </div>
+            
+            <div class="section-question">
+                "Which accounts need intervention right now?"
+            </div>
+        </div>
+
+        <!-- PAGE 2: Weekly Exceptions Register -->
+        <div class="section" id="exceptions">
+            <div class="section-header">
+                <div class="section-title">
+                    <h2>PAGE 2: Weekly Exceptions Register (Across All Clients)</h2>
+                    <div class="section-purpose">Force focus.</div>
+                </div>
+            </div>
+            
+            <table id="exceptionsTable">
+                <thead>
+                    <tr>
+                        <th>Client</th>
+                        <th>Campaign</th>
+                        <th>Issue</th>
+                        <th>Severity</th>
+                        <th>Root Cause</th>
+                        <th>Action This Week</th>
+                        <th>Owner</th>
+                        <th style="width: 80px;"></th>
+                    </tr>
+                </thead>
+                <tbody id="exceptionsBody">
+                </tbody>
+            </table>
+            
+            <div class="action-buttons">
+                <button class="btn btn-success" onclick="addExceptionRow()">+ Add Exception</button>
+            </div>
+
+            <div class="rules">
+                <strong>Rules:</strong>
+                <ul>
+                    <li>Only new or unresolved issues appear</li>
+                    <li>No historic storytelling</li>
+                    <li>Closed issues drop off</li>
+                </ul>
+            </div>
+            
+            <div class="section-question">
+                "What are we fixing this week?"
+            </div>
+        </div>
+
+        <!-- PAGE 3: Risk Early-Warning Log -->
+        <div class="section" id="risks">
+            <div class="section-header">
+                <div class="section-title">
+                    <h2>PAGE 3: Risk Early-Warning Log</h2>
+                    <div class="section-purpose">Look ahead, not back.</div>
+                </div>
+            </div>
+            
+            <table id="risksTable">
+                <thead>
+                    <tr>
+                        <th>Client</th>
+                        <th>Campaign</th>
+                        <th>Risk</th>
+                        <th>Time Horizon</th>
+                        <th>Likelihood</th>
+                        <th>Action</th>
+                        <th style="width: 80px;"></th>
+                    </tr>
+                </thead>
+                <tbody id="risksBody">
+                </tbody>
+            </table>
+            
+            <div class="action-buttons">
+                <button class="btn btn-success" onclick="addRiskRow()">+ Add Risk</button>
+            </div>
+
+            <div class="rules">
+                <strong>Rules:</strong>
+                <ul>
+                    <li>Risks ≠ issues</li>
+                    <li>If it happens, it moves to Page 2 next week</li>
+                </ul>
+            </div>
+            
+            <div class="section-question">
+                "What could blindside us?"
+            </div>
+        </div>
+
+        <!-- PAGE 4: Relationship Temperature Check -->
+        <div class="section" id="relationships">
+            <div class="section-header">
+                <div class="section-title">
+                    <h2>PAGE 4: Relationship Temperature Check</h2>
+                    <div class="section-purpose">Political control.</div>
+                </div>
+            </div>
+            
+            <table id="relationshipsTable">
+                <thead>
+                    <tr>
+                        <th>Client</th>
+                        <th>Campaign</th>
+                        <th>Stakeholder</th>
+                        <th>Sentiment</th>
+                        <th>Change vs Last Week</th>
+                        <th>Action</th>
+                        <th style="width: 80px;"></th>
+                    </tr>
+                </thead>
+                <tbody id="relationshipsBody">
+                </tbody>
+            </table>
+            
+            <div class="action-buttons">
+                <button class="btn btn-success" onclick="addRelationshipRow()">+ Add Stakeholder</button>
+            </div>
+
+            <div class="rules">
+                <strong>Rules:</strong>
+                <ul>
+                    <li>Sentiment must move (static = lazy)</li>
+                    <li>Only exceptions discussed</li>
+                </ul>
+            </div>
+            
+            <div class="section-question">
+                "Are relationships deteriorating before performance does?"
+            </div>
+        </div>
+
+        <!-- PAGE 5: Growth & Commercial Movement -->
+        <div class="section" id="growth">
+            <div class="section-header">
+                <div class="section-title">
+                    <h2>PAGE 5: Growth & Commercial Movement (Very Light)</h2>
+                    <div class="section-purpose">Prevent stagnation.</div>
+                </div>
+            </div>
+            
+            <table id="growthTable">
+                <thead>
+                    <tr>
+                        <th>Client</th>
+                        <th>Campaign</th>
+                        <th>Opportunity</th>
+                        <th>Movement This Week</th>
+                        <th>Blocker</th>
+                        <th style="width: 80px;"></th>
+                    </tr>
+                </thead>
+                <tbody id="growthBody">
+                </tbody>
+            </table>
+            
+            <div class="action-buttons">
+                <button class="btn btn-success" onclick="addGrowthRow()">+ Add Opportunity</button>
+            </div>
+
+            <div class="rules">
+                <strong>Rules:</strong>
+                <ul>
+                    <li>No movement = red flag</li>
+                    <li>Growth is expected to move every week (even small steps)</li>
+                </ul>
+            </div>
+            
+            <div class="section-question">
+                "Are we actively pushing growth or just talking about it?"
+            </div>
+        </div>
+
+        <!-- PAGE 6: Weekly Commitments & Escalations -->
+        <div class="section" id="commitments">
+            <div class="section-header">
+                <div class="section-title">
+                    <h2>PAGE 6: Weekly Commitments & Escalations</h2>
+                    <div class="section-purpose">Accountability.</div>
+                </div>
+            </div>
+            
+            <h3 style="margin: 20px 0 10px 0; color: #495057;">Commitments Made Last Week</h3>
+            <table id="pastCommitmentsTable">
+                <thead>
+                    <tr>
+                        <th>Commitment</th>
+                        <th style="width: 150px;">Status</th>
+                        <th>Comment</th>
+                        <th style="width: 80px;"></th>
+                    </tr>
+                </thead>
+                <tbody id="pastCommitmentsBody">
+                </tbody>
+            </table>
+            
+            <div class="action-buttons">
+                <button class="btn btn-success" onclick="addPastCommitmentRow()">+ Add Past Commitment</button>
+            </div>
+
+            <h3 style="margin: 30px 0 10px 0; color: #495057;">New Commitments This Week</h3>
+            <table id="newCommitmentsTable">
+                <thead>
+                    <tr>
+                        <th>Commitment</th>
+                        <th>Owner</th>
+                        <th style="width: 150px;">Due</th>
+                        <th style="width: 80px;"></th>
+                    </tr>
+                </thead>
+                <tbody id="newCommitmentsBody">
+                </tbody>
+            </table>
+            
+            <div class="action-buttons">
+                <button class="btn btn-success" onclick="addNewCommitmentRow()">+ Add New Commitment</button>
+            </div>
+
+            <h3 style="margin: 30px 0 10px 0; color: #495057;">Escalations Required</h3>
+            <p style="color: #6c757d; margin-bottom: 10px; font-style: italic;">"What I need your help with this week"</p>
+            <textarea id="escalations" rows="4" placeholder="Enter escalations here..."></textarea>
+        </div>
+    </div>
+
+    <script>
+        // ========================================
+        // CONFIGURATION - UPDATE THIS URL
+        // ========================================
+        const SCRIPT_URL = 'YOUR_SCRIPT_URL_HERE'; // Replace with your Google Apps Script Web App URL
+        
+        // Initialize data structures
+        let dashboardData = {
+            weekDate: '',
+            portfolio: [],
+            exceptions: [],
+            risks: [],
+            relationships: [],
+            growth: [],
+            pastCommitments: [],
+            newCommitments: [],
+            escalations: ''
+        };
+
+        // Historical archive
+        let weeklyArchive = [];
+
+        // Load data from Google Sheets on page load
+        window.onload = function() {
+            setCurrentWeek();
+            loadDataFromSheets();
+            loadArchiveFromSheets();
+        };
+
+        // Navigation function
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Remove active class from all nav buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+
+            // Highlight active nav button
+            event.currentTarget.classList.add('active');
+
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        function setCurrentWeek() {
+            const today = new Date();
+            const monday = new Date(today);
+            monday.setDate(today.getDate() - today.getDay() + 1);
+            document.getElementById('weekDate').value = monday.toISOString().split('T')[0];
+        }
+
+        // ========================================
+        // GOOGLE SHEETS INTEGRATION
+        // ========================================
+        
+        async function loadDataFromSheets() {
+            if (SCRIPT_URL === 'YOUR_SCRIPT_URL_HERE') {
+                alert('⚠️ Please configure your Google Apps Script URL first!\n\nSee SETUP_INSTRUCTIONS.md for details.');
+                return;
+            }
+
+            try {
+                showLoading('Loading data from Google Sheets...');
+                const response = await fetch(`${SCRIPT_URL}?action=load`);
+                const data = await response.json();
+                
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                
+                dashboardData = data;
+                document.getElementById('weekDate').value = data.weekDate || '';
+                document.getElementById('escalations').value = data.escalations || '';
+                renderAllTables();
+                hideLoading();
+                
+            } catch (error) {
+                hideLoading();
+                console.error('Error loading data:', error);
+                alert('❌ Error loading data from Google Sheets: ' + error.message);
+            }
+        }
+
+        async function loadArchiveFromSheets() {
+            if (SCRIPT_URL === 'YOUR_SCRIPT_URL_HERE') {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${SCRIPT_URL}?action=loadArchive`);
+                const data = await response.json();
+                
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                
+                weeklyArchive = data;
+                renderSummaryView();
+                
+            } catch (error) {
+                console.error('Error loading archive:', error);
+            }
+        }
+
+        async function saveData() {
+            if (SCRIPT_URL === 'YOUR_SCRIPT_URL_HERE') {
+                alert('⚠️ Please configure your Google Apps Script URL first!\n\nSee SETUP_INSTRUCTIONS.md for details.');
+                return;
+            }
+
+            dashboardData.weekDate = document.getElementById('weekDate').value;
+            dashboardData.escalations = document.getElementById('escalations').value;
+            
+            if (!dashboardData.weekDate) {
+                alert('⚠️ Please select a week date before saving.');
+                return;
+            }
+
+            try {
+                showLoading('Saving to Google Sheets...');
+                
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'save',
+                        ...dashboardData
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.error) {
+                    throw new Error(result.error);
+                }
+                
+                hideLoading();
+                alert('✅ Data saved to Google Sheets successfully!');
+                
+                // Reload archive to update historical view
+                await loadArchiveFromSheets();
+                
+            } catch (error) {
+                hideLoading();
+                console.error('Error saving data:', error);
+                alert('❌ Error saving to Google Sheets: ' + error.message);
+            }
+        }
+
+        function showLoading(message) {
+            const overlay = document.createElement('div');
+            overlay.id = 'loadingOverlay';
+            overlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.7);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10000;
+                color: white;
+                font-size: 18px;
+                font-weight: 600;
+            `;
+            overlay.innerHTML = `
+                <div style="text-align: center;">
+                    <div style="margin-bottom: 20px;">⏳</div>
+                    <div>${message}</div>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+        }
+
+        function hideLoading() {
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) {
+                overlay.remove();
+            }
+        }
+
+        function exportData() {
+            const dataStr = JSON.stringify(dashboardData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `dashboard-${dashboardData.weekDate || 'export'}.json`;
+            link.click();
+        }
+
+        // Traffic light functions
+        function createTrafficLight(currentStatus, index, type) {
+            const statuses = ['green', 'amber', 'red'];
+            const currentIndex = statuses.indexOf(currentStatus) || 0;
+            return `<div class="status-indicator status-${currentStatus}" 
+                         onclick="cycleStatus(${index}, '${type}', this)"
+                         title="Click to change"></div>`;
+        }
+
+        function cycleStatus(index, type, element) {
+            const statuses = ['green', 'amber', 'red'];
+            const classes = element.className.split(' ');
+            const currentStatus = classes[1].replace('status-', '');
+            const currentIndex = statuses.indexOf(currentStatus);
+            const nextStatus = statuses[(currentIndex + 1) % 3];
+            
+            element.className = `status-indicator status-${nextStatus}`;
+            
+            // Update data
+            const field = type.split('-')[1]; // e.g., 'commercial' from 'portfolio-commercial'
+            if (type.startsWith('portfolio')) {
+                dashboardData.portfolio[index][field] = nextStatus;
+                
+                // If not updating overall, recalculate it
+                if (field !== 'overall') {
+                    calculateOverallStatus(index);
+                    renderPortfolioTable();
+                }
+            }
+        }
+
+        function calculateOverallStatus(index) {
+            const row = dashboardData.portfolio[index];
+            const statuses = [row.commercial, row.ops, row.relationship, row.growth];
+            
+            // Check for red first (worst)
+            if (statuses.includes('red')) {
+                row.overall = 'red';
+            }
+            // Then check for amber
+            else if (statuses.includes('amber')) {
+                row.overall = 'amber';
+            }
+            // Otherwise all must be green
+            else {
+                row.overall = 'green';
+            }
+        }
+
+        // Portfolio functions
+        function addPortfolioRow() {
+            const newRow = {
+                client: '',
+                campaign: '',
+                commercial: 'green',
+                ops: 'green',
+                relationship: 'green',
+                growth: 'green',
+                overall: 'green'
+            };
+            dashboardData.portfolio.push(newRow);
+            const newIndex = dashboardData.portfolio.length - 1;
+            calculateOverallStatus(newIndex);
+            renderPortfolioTable();
+        }
+
+        function deletePortfolioRow(index) {
+            if (confirm('Delete this client/campaign?')) {
+                dashboardData.portfolio.splice(index, 1);
+                renderPortfolioTable();
+            }
+        }
+
+        function renderPortfolioTable() {
+            const tbody = document.getElementById('portfolioBody');
+            const viewMode = document.getElementById('portfolioViewMode')?.value || 'all';
+            tbody.innerHTML = '';
+            
+            if (viewMode === 'grouped') {
+                // Group by client
+                const clientGroups = {};
+                dashboardData.portfolio.forEach((row, index) => {
+                    const client = row.client || 'Unnamed Client';
+                    if (!clientGroups[client]) {
+                        clientGroups[client] = [];
+                    }
+                    clientGroups[client].push({ ...row, originalIndex: index });
+                });
+
+                // Render grouped
+                Object.keys(clientGroups).sort().forEach(clientName => {
+                    const campaigns = clientGroups[clientName];
+                    
+                    // Client header row
+                    const headerTr = document.createElement('tr');
+                    headerTr.className = 'client-group-header';
+                    headerTr.innerHTML = `
+                        <td colspan="8">${clientName} (${campaigns.length} campaign${campaigns.length !== 1 ? 's' : ''})</td>
+                    `;
+                    tbody.appendChild(headerTr);
+
+                    // Campaign rows
+                    campaigns.forEach(campaign => {
+                        // Ensure overall is calculated
+                        calculateOverallStatus(campaign.originalIndex);
+                        
+                        const tr = document.createElement('tr');
+                        tr.className = 'campaign-row';
+                        tr.innerHTML = `
+                            <td></td>
+                            <td><input type="text" value="${campaign.campaign || ''}" onchange="updatePortfolioField(${campaign.originalIndex}, 'campaign', this.value)" placeholder="Campaign name"></td>
+                            <td class="traffic-light-cell">${createTrafficLight(campaign.commercial, campaign.originalIndex, 'portfolio-commercial')}</td>
+                            <td class="traffic-light-cell">${createTrafficLight(campaign.ops, campaign.originalIndex, 'portfolio-ops')}</td>
+                            <td class="traffic-light-cell">${createTrafficLight(campaign.relationship, campaign.originalIndex, 'portfolio-relationship')}</td>
+                            <td class="traffic-light-cell">${createTrafficLight(campaign.growth, campaign.originalIndex, 'portfolio-growth')}</td>
+                            <td class="traffic-light-cell"><div class="status-indicator status-${dashboardData.portfolio[campaign.originalIndex].overall}" style="cursor: default;" title="Auto-calculated from other statuses"></div></td>
+                            <td><button class="btn btn-danger" onclick="deletePortfolioRow(${campaign.originalIndex})">Delete</button></td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                });
+            } else {
+                // Flat view (original)
+                dashboardData.portfolio.forEach((row, index) => {
+                    // Ensure overall is calculated
+                    calculateOverallStatus(index);
+                    
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><input type="text" value="${row.client}" onchange="updatePortfolioField(${index}, 'client', this.value)"></td>
+                        <td><input type="text" value="${row.campaign || ''}" onchange="updatePortfolioField(${index}, 'campaign', this.value)"></td>
+                        <td class="traffic-light-cell">${createTrafficLight(row.commercial, index, 'portfolio-commercial')}</td>
+                        <td class="traffic-light-cell">${createTrafficLight(row.ops, index, 'portfolio-ops')}</td>
+                        <td class="traffic-light-cell">${createTrafficLight(row.relationship, index, 'portfolio-relationship')}</td>
+                        <td class="traffic-light-cell">${createTrafficLight(row.growth, index, 'portfolio-growth')}</td>
+                        <td class="traffic-light-cell"><div class="status-indicator status-${row.overall}" style="cursor: default;" title="Auto-calculated from other statuses"></div></td>
+                        <td><button class="btn btn-danger" onclick="deletePortfolioRow(${index})">Delete</button></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        }
+
+        function updatePortfolioField(index, field, value) {
+            dashboardData.portfolio[index][field] = value;
+        }
+
+        // Exceptions functions
+        function addExceptionRow() {
+            dashboardData.exceptions.push({
+                client: '',
+                campaign: '',
+                issue: '',
+                severity: 'High',
+                rootCause: '',
+                action: '',
+                owner: ''
+            });
+            renderExceptionsTable();
+        }
+
+        function deleteExceptionRow(index) {
+            if (confirm('Delete this exception?')) {
+                dashboardData.exceptions.splice(index, 1);
+                renderExceptionsTable();
+            }
+        }
+
+        function renderExceptionsTable() {
+            const tbody = document.getElementById('exceptionsBody');
+            tbody.innerHTML = '';
+            
+            dashboardData.exceptions.forEach((row, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><input type="text" value="${row.client}" onchange="dashboardData.exceptions[${index}].client = this.value"></td>
+                    <td><input type="text" value="${row.campaign || ''}" onchange="dashboardData.exceptions[${index}].campaign = this.value"></td>
+                    <td><input type="text" value="${row.issue}" onchange="dashboardData.exceptions[${index}].issue = this.value"></td>
+                    <td>
+                        <select onchange="dashboardData.exceptions[${index}].severity = this.value">
+                            <option ${row.severity === 'High' ? 'selected' : ''}>High</option>
+                            <option ${row.severity === 'Medium' ? 'selected' : ''}>Medium</option>
+                            <option ${row.severity === 'Low' ? 'selected' : ''}>Low</option>
+                        </select>
+                    </td>
+                    <td><input type="text" value="${row.rootCause}" onchange="dashboardData.exceptions[${index}].rootCause = this.value"></td>
+                    <td><input type="text" value="${row.action}" onchange="dashboardData.exceptions[${index}].action = this.value"></td>
+                    <td><input type="text" value="${row.owner}" onchange="dashboardData.exceptions[${index}].owner = this.value"></td>
+                    <td><button class="btn btn-danger" onclick="deleteExceptionRow(${index})">Delete</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Risks functions
+        function addRiskRow() {
+            dashboardData.risks.push({
+                client: '',
+                campaign: '',
+                risk: '',
+                timeHorizon: '60-90 days',
+                likelihood: 'Medium',
+                action: ''
+            });
+            renderRisksTable();
+        }
+
+        function deleteRiskRow(index) {
+            if (confirm('Delete this risk?')) {
+                dashboardData.risks.splice(index, 1);
+                renderRisksTable();
+            }
+        }
+
+        function renderRisksTable() {
+            const tbody = document.getElementById('risksBody');
+            tbody.innerHTML = '';
+            
+            dashboardData.risks.forEach((row, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><input type="text" value="${row.client}" onchange="dashboardData.risks[${index}].client = this.value"></td>
+                    <td><input type="text" value="${row.campaign || ''}" onchange="dashboardData.risks[${index}].campaign = this.value"></td>
+                    <td><input type="text" value="${row.risk}" onchange="dashboardData.risks[${index}].risk = this.value"></td>
+                    <td>
+                        <select onchange="dashboardData.risks[${index}].timeHorizon = this.value">
+                            <option ${row.timeHorizon === '0-30 days' ? 'selected' : ''}>0-30 days</option>
+                            <option ${row.timeHorizon === '30-60 days' ? 'selected' : ''}>30-60 days</option>
+                            <option ${row.timeHorizon === '60-90 days' ? 'selected' : ''}>60-90 days</option>
+                            <option ${row.timeHorizon === '90+ days' ? 'selected' : ''}>90+ days</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select onchange="dashboardData.risks[${index}].likelihood = this.value">
+                            <option ${row.likelihood === 'High' ? 'selected' : ''}>High</option>
+                            <option ${row.likelihood === 'Medium' ? 'selected' : ''}>Medium</option>
+                            <option ${row.likelihood === 'Low' ? 'selected' : ''}>Low</option>
+                        </select>
+                    </td>
+                    <td><input type="text" value="${row.action}" onchange="dashboardData.risks[${index}].action = this.value"></td>
+                    <td><button class="btn btn-danger" onclick="deleteRiskRow(${index})">Delete</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Relationships functions
+        function addRelationshipRow() {
+            dashboardData.relationships.push({
+                client: '',
+                campaign: '',
+                stakeholder: '',
+                sentiment: 'Neutral',
+                change: '→',
+                action: ''
+            });
+            renderRelationshipsTable();
+        }
+
+        function deleteRelationshipRow(index) {
+            if (confirm('Delete this stakeholder?')) {
+                dashboardData.relationships.splice(index, 1);
+                renderRelationshipsTable();
+            }
+        }
+
+        function renderRelationshipsTable() {
+            const tbody = document.getElementById('relationshipsBody');
+            tbody.innerHTML = '';
+            
+            dashboardData.relationships.forEach((row, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><input type="text" value="${row.client}" onchange="dashboardData.relationships[${index}].client = this.value"></td>
+                    <td><input type="text" value="${row.campaign || ''}" onchange="dashboardData.relationships[${index}].campaign = this.value"></td>
+                    <td><input type="text" value="${row.stakeholder}" onchange="dashboardData.relationships[${index}].stakeholder = this.value"></td>
+                    <td>
+                        <select onchange="dashboardData.relationships[${index}].sentiment = this.value">
+                            <option ${row.sentiment === 'Positive' ? 'selected' : ''}>Positive</option>
+                            <option ${row.sentiment === 'Neutral' ? 'selected' : ''}>Neutral</option>
+                            <option ${row.sentiment === 'Negative' ? 'selected' : ''}>Negative</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select onchange="dashboardData.relationships[${index}].change = this.value">
+                            <option ${row.change === '↑' ? 'selected' : ''}>↑ Improving</option>
+                            <option ${row.change === '→' ? 'selected' : ''}>→ Stable</option>
+                            <option ${row.change === '↓' ? 'selected' : ''}>↓ Deteriorating</option>
+                        </select>
+                    </td>
+                    <td><input type="text" value="${row.action}" onchange="dashboardData.relationships[${index}].action = this.value"></td>
+                    <td><button class="btn btn-danger" onclick="deleteRelationshipRow(${index})">Delete</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Growth functions
+        function addGrowthRow() {
+            dashboardData.growth.push({
+                client: '',
+                campaign: '',
+                opportunity: '',
+                movement: '',
+                blocker: ''
+            });
+            renderGrowthTable();
+        }
+
+        function deleteGrowthRow(index) {
+            if (confirm('Delete this opportunity?')) {
+                dashboardData.growth.splice(index, 1);
+                renderGrowthTable();
+            }
+        }
+
+        function renderGrowthTable() {
+            const tbody = document.getElementById('growthBody');
+            tbody.innerHTML = '';
+            
+            dashboardData.growth.forEach((row, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><input type="text" value="${row.client}" onchange="dashboardData.growth[${index}].client = this.value"></td>
+                    <td><input type="text" value="${row.campaign || ''}" onchange="dashboardData.growth[${index}].campaign = this.value"></td>
+                    <td><input type="text" value="${row.opportunity}" onchange="dashboardData.growth[${index}].opportunity = this.value"></td>
+                    <td><input type="text" value="${row.movement}" onchange="dashboardData.growth[${index}].movement = this.value"></td>
+                    <td><input type="text" value="${row.blocker}" onchange="dashboardData.growth[${index}].blocker = this.value"></td>
+                    <td><button class="btn btn-danger" onclick="deleteGrowthRow(${index})">Delete</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Commitments functions
+        function addPastCommitmentRow() {
+            dashboardData.pastCommitments.push({
+                commitment: '',
+                status: 'Pending',
+                comment: ''
+            });
+            renderPastCommitmentsTable();
+        }
+
+        function deletePastCommitmentRow(index) {
+            if (confirm('Delete this commitment?')) {
+                dashboardData.pastCommitments.splice(index, 1);
+                renderPastCommitmentsTable();
+            }
+        }
+
+        function renderPastCommitmentsTable() {
+            const tbody = document.getElementById('pastCommitmentsBody');
+            tbody.innerHTML = '';
+            
+            dashboardData.pastCommitments.forEach((row, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><input type="text" value="${row.commitment}" onchange="dashboardData.pastCommitments[${index}].commitment = this.value"></td>
+                    <td>
+                        <select onchange="dashboardData.pastCommitments[${index}].status = this.value">
+                            <option ${row.status === 'Complete' ? 'selected' : ''}>Complete</option>
+                            <option ${row.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                            <option ${row.status === 'Missed' ? 'selected' : ''}>Missed</option>
+                        </select>
+                    </td>
+                    <td><input type="text" value="${row.comment}" onchange="dashboardData.pastCommitments[${index}].comment = this.value"></td>
+                    <td><button class="btn btn-danger" onclick="deletePastCommitmentRow(${index})">Delete</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function addNewCommitmentRow() {
+            dashboardData.newCommitments.push({
+                commitment: '',
+                owner: '',
+                due: ''
+            });
+            renderNewCommitmentsTable();
+        }
+
+        function deleteNewCommitmentRow(index) {
+            if (confirm('Delete this commitment?')) {
+                dashboardData.newCommitments.splice(index, 1);
+                renderNewCommitmentsTable();
+            }
+        }
+
+        function renderNewCommitmentsTable() {
+            const tbody = document.getElementById('newCommitmentsBody');
+            tbody.innerHTML = '';
+            
+            dashboardData.newCommitments.forEach((row, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><input type="text" value="${row.commitment}" onchange="dashboardData.newCommitments[${index}].commitment = this.value"></td>
+                    <td><input type="text" value="${row.owner}" onchange="dashboardData.newCommitments[${index}].owner = this.value"></td>
+                    <td><input type="text" value="${row.due}" onchange="dashboardData.newCommitments[${index}].due = this.value"></td>
+                    <td><button class="btn btn-danger" onclick="deleteNewCommitmentRow(${index})">Delete</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderAllTables() {
+            renderPortfolioTable();
+            renderExceptionsTable();
+            renderRisksTable();
+            renderRelationshipsTable();
+            renderGrowthTable();
+            renderPastCommitmentsTable();
+            renderNewCommitmentsTable();
+        }
+
+        // Auto-save every 30 seconds
+        setInterval(() => {
+            dashboardData.weekDate = document.getElementById('weekDate').value;
+            dashboardData.escalations = document.getElementById('escalations').value;
+            localStorage.setItem('dashboardData', JSON.stringify(dashboardData));
+        }, 30000);
+        
+        // ========================================
+        // HISTORICAL SUMMARY VIEW
+        // ========================================
+        
+        function clearHistory() {
+            if (confirm('⚠️ This will require manual deletion in Google Sheets.\n\nTo clear history:\n1. Open your Google Sheet\n2. Go to the WeeklyArchive tab\n3. Delete the data rows')) {
+                // Manual process - would need additional Apps Script endpoint
+            }
+        }
+
+        function renderSummaryView() {
+            const view = document.getElementById('summaryView').value;
+            const container = document.getElementById('summaryContent');
+
+            if (weeklyArchive.length === 0) {
+                container.innerHTML = '<p style="color: #6c757d; padding: 20px; text-align: center;">No historical data yet. Save your first week to start tracking trends.</p>';
+                return;
+            }
+
+            if (view === 'client') {
+                renderByClientGrouped(container);
+            } else if (view === 'campaign') {
+                renderByCampaign(container);
+            } else {
+                renderByWeek(container);
+            }
+        }
+
+        function renderByClientGrouped(container) {
+            // Group all campaigns by client across all weeks
+            const clientData = {};
+            
+            weeklyArchive.forEach(week => {
+                week.portfolio.forEach(entry => {
+                    if (entry.client) {
+                        if (!clientData[entry.client]) {
+                            clientData[entry.client] = {};
+                        }
+                        const campaignKey = entry.campaign || '(No Campaign)';
+                        if (!clientData[entry.client][campaignKey]) {
+                            clientData[entry.client][campaignKey] = [];
+                        }
+                        clientData[entry.client][campaignKey].push({
+                            week: week.weekDate,
+                            ...entry
+                        });
+                    }
+                });
+            });
+
+            if (Object.keys(clientData).length === 0) {
+                container.innerHTML = '<p style="color: #6c757d; padding: 20px;">No client data available.</p>';
+                return;
+            }
+
+            let html = '';
+
+            Object.keys(clientData).sort().forEach(clientName => {
+                html += `<div style="margin-bottom: 40px; padding: 20px; background: #f8f9fa; border-radius: 8px;">`;
+                html += `<h3 style="color: #495057; margin-bottom: 20px; border-bottom: 2px solid #dee2e6; padding-bottom: 10px;">${clientName}</h3>`;
+
+                Object.keys(clientData[clientName]).sort().forEach(campaignName => {
+                    const entries = clientData[clientName][campaignName];
+                    
+                    html += `
+                        <div style="margin-bottom: 25px;">
+                            <h4 style="color: #6c757d; margin-bottom: 10px; font-size: 16px;">${campaignName}</h4>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Week</th>
+                                        <th style="text-align: center;">Commercial</th>
+                                        <th style="text-align: center;">Ops</th>
+                                        <th style="text-align: center;">Relationship</th>
+                                        <th style="text-align: center;">Growth</th>
+                                        <th style="text-align: center;">Overall</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                    `;
+
+                    entries.forEach(entry => {
+                        html += `
+                            <tr>
+                                <td><strong>${formatDate(entry.week)}</strong></td>
+                                <td class="traffic-light-cell">${createStaticTrafficLight(entry.commercial)}</td>
+                                <td class="traffic-light-cell">${createStaticTrafficLight(entry.ops)}</td>
+                                <td class="traffic-light-cell">${createStaticTrafficLight(entry.relationship)}</td>
+                                <td class="traffic-light-cell">${createStaticTrafficLight(entry.growth)}</td>
+                                <td class="traffic-light-cell">${createStaticTrafficLight(entry.overall)}</td>
+                            </tr>
+                        `;
+                    });
+
+                    html += `
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                });
+
+                html += `</div>`;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function renderByCampaign(container) {
+            // Get all unique client/campaign combinations
+            const allEntries = new Set();
+            weeklyArchive.forEach(week => {
+                week.portfolio.forEach(entry => {
+                    if (entry.client) {
+                        const key = `${entry.client}${entry.campaign ? ' - ' + entry.campaign : ''}`;
+                        allEntries.add(key);
+                    }
+                });
+            });
+
+            if (allEntries.size === 0) {
+                container.innerHTML = '<p style="color: #6c757d; padding: 20px;">No client data available.</p>';
+                return;
+            }
+
+            let html = '';
+            
+            Array.from(allEntries).sort().forEach(entryKey => {
+                html += `
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="color: #495057; margin-bottom: 15px;">${entryKey}</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Week</th>
+                                    <th style="text-align: center;">Commercial</th>
+                                    <th style="text-align: center;">Ops</th>
+                                    <th style="text-align: center;">Relationship</th>
+                                    <th style="text-align: center;">Growth</th>
+                                    <th style="text-align: center;">Overall</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                weeklyArchive.forEach(week => {
+                    week.portfolio.forEach(entry => {
+                        const currentKey = `${entry.client}${entry.campaign ? ' - ' + entry.campaign : ''}`;
+                        if (currentKey === entryKey) {
+                            html += `
+                                <tr>
+                                    <td><strong>${formatDate(week.weekDate)}</strong></td>
+                                    <td class="traffic-light-cell">${createStaticTrafficLight(entry.commercial)}</td>
+                                    <td class="traffic-light-cell">${createStaticTrafficLight(entry.ops)}</td>
+                                    <td class="traffic-light-cell">${createStaticTrafficLight(entry.relationship)}</td>
+                                    <td class="traffic-light-cell">${createStaticTrafficLight(entry.growth)}</td>
+                                    <td class="traffic-light-cell">${createStaticTrafficLight(entry.overall)}</td>
+                                </tr>
+                            `;
+                        }
+                    });
+                });
+
+                html += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function renderByWeek(container) {
+            let html = '';
+
+            weeklyArchive.forEach(week => {
+                html += `
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="color: #495057; margin-bottom: 15px;">Week of ${formatDate(week.weekDate)}</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Client</th>
+                                    <th>Campaign</th>
+                                    <th style="text-align: center;">Commercial</th>
+                                    <th style="text-align: center;">Ops</th>
+                                    <th style="text-align: center;">Relationship</th>
+                                    <th style="text-align: center;">Growth</th>
+                                    <th style="text-align: center;">Overall</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                week.portfolio.forEach(entry => {
+                    if (entry.client) {
+                        html += `
+                            <tr>
+                                <td><strong>${entry.client}</strong></td>
+                                <td>${entry.campaign || '-'}</td>
+                                <td class="traffic-light-cell">${createStaticTrafficLight(entry.commercial)}</td>
+                                <td class="traffic-light-cell">${createStaticTrafficLight(entry.ops)}</td>
+                                <td class="traffic-light-cell">${createStaticTrafficLight(entry.relationship)}</td>
+                                <td class="traffic-light-cell">${createStaticTrafficLight(entry.growth)}</td>
+                                <td class="traffic-light-cell">${createStaticTrafficLight(entry.overall)}</td>
+                            </tr>
+                        `;
+                    }
+                });
+
+                html += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function createStaticTrafficLight(status) {
+            return `<div class="status-indicator status-${status}" style="cursor: default;"></div>`;
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+    </script>
+</body>
+</html>

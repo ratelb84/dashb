@@ -975,7 +975,7 @@
 
     <script>
         // ===== CONFIGURATION =====
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzd5qWpcdodkO32JWKHdMGne-tj5T3BQMrzxoQvtZprcj_zGyPALL_aGoJYqqee6v8w/exec'; // Replace with your deployed script URL
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzKF0vNC3NFy97aIs7rR_nlx9jiNJF2NXY2KX3zadNWIhK089FP4Ws34qxh3NckS_9Y/exec'; // Replace with your deployed script URL
 
         // ===== GLOBAL STATE =====
         let currentUser = null;
@@ -1047,16 +1047,8 @@
             }
 
             try {
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        action: 'setOwnPassword',
-                        userEmail: currentUser.email,
-                        newPassword: newPassword
-                    })
-                });
-
+                const url = `${SCRIPT_URL}?action=setOwnPassword&userEmail=${encodeURIComponent(currentUser.email)}&newPassword=${encodeURIComponent(newPassword)}`;
+                const response = await fetch(url);
                 const result = await response.json();
 
                 if (result.success) {
@@ -1067,6 +1059,7 @@
                 }
             } catch (error) {
                 showError('Error setting password: ' + error.message);
+                console.error('Password setup error:', error);
             }
         }
 

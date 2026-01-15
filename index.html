@@ -115,27 +115,31 @@
         }
 
         .nav-buttons {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 8px;
+            margin-bottom: 20px;
+            overflow-x: auto;
         }
 
         .nav-btn {
-            padding: 20px;
+            padding: 10px 12px;
             background: white;
-            border: 2px solid #dee2e6;
-            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
             text-align: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            flex: 1;
+            min-width: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .nav-btn:hover {
             border-color: #28a745;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            background: #f8fff8;
         }
 
         .nav-btn.active {
@@ -145,14 +149,12 @@
         }
 
         .nav-btn-title {
-            font-size: 16px;
+            font-size: 13px;
             font-weight: 600;
-            margin-bottom: 5px;
         }
 
         .nav-btn-desc {
-            font-size: 12px;
-            color: #6c757d;
+            display: none;
         }
 
         .nav-btn.active .nav-btn-desc {
@@ -174,9 +176,9 @@
 
         header {
             background: white;
-            padding: 20px 30px;
+            padding: 15px 25px;
             border-radius: 8px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
@@ -184,8 +186,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #e9ecef;
         }
 
         .header-brand {
@@ -201,7 +201,7 @@
 
         .header-brand h1 {
             color: #1a1a1a;
-            font-size: 22px;
+            font-size: 20px;
             margin: 0;
             font-weight: 600;
         }
@@ -209,47 +209,51 @@
         .header-user {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 12px;
         }
 
-        .user-details {
-            text-align: right;
+        .user-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #f8f9fa;
+            padding: 8px 15px;
+            border-radius: 25px;
+            border: 1px solid #e9ecef;
         }
 
-        .user-email {
+        .user-name {
             color: #495057;
-            font-size: 14px;
-            display: block;
+            font-size: 13px;
+            font-weight: 500;
         }
 
-        .user-role {
+        .user-role-badge {
             background: #28a745;
             color: white;
             padding: 3px 10px;
             border-radius: 12px;
             font-size: 11px;
             font-weight: 600;
-            display: inline-block;
-            margin-top: 4px;
         }
 
         .header-actions {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .btn-admin {
             background: #6c757d;
             color: white;
             border: none;
-            padding: 8px 16px;
+            padding: 8px 14px;
             border-radius: 6px;
-            font-size: 13px;
+            font-size: 12px;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             transition: background 0.2s;
         }
 
@@ -257,13 +261,31 @@
             background: #5a6268;
         }
 
+        .btn-switch {
+            background: #17a2b8;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: background 0.2s;
+        }
+
+        .btn-switch:hover {
+            background: #138496;
+        }
+
         .btn-logout {
             background: transparent;
             color: #dc3545;
             border: 1px solid #dc3545;
-            padding: 8px 16px;
+            padding: 8px 14px;
             border-radius: 6px;
-            font-size: 13px;
+            font-size: 12px;
             cursor: pointer;
             transition: all 0.2s;
         }
@@ -271,71 +293,6 @@
         .btn-logout:hover {
             background: #dc3545;
             color: white;
-        }
-
-        .header-bottom {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 15px;
-        }
-
-        .week-selector {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .week-selector label {
-            color: #495057;
-            font-size: 14px;
-        }
-
-        .week-selector input {
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-
-        .header-buttons {
-            display: flex;
-            gap: 8px;
-        }
-
-        .header-btn {
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
-            color: #495057;
-            padding: 8px 14px;
-            border-radius: 6px;
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .header-btn:hover {
-            background: #e9ecef;
-            border-color: #adb5bd;
-        }
-
-        .header-btn.primary {
-            background: #28a745;
-            border-color: #28a745;
-            color: white;
-        }
-
-        .header-btn.primary:hover {
-            background: #218838;
-        }
-
-        .header-left h1 {
-            color: #1a1a1a;
-            font-size: 28px;
-            margin-bottom: 5px;
         }
 
         .header-right {
@@ -347,6 +304,20 @@
             align-items: center;
             gap: 15px;
             margin-bottom: 10px;
+        }
+
+        .user-email {
+            color: #495057;
+            font-size: 14px;
+        }
+
+        .user-role {
+            background: #28a745;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
         }
 
         h1 {
@@ -463,6 +434,7 @@
         .status-red { background: #dc3545; border-color: #dc3545; }
 
         .btn {
+            text-align: center;
             padding: 8px 16px;
             border: none;
             border-radius: 4px;
@@ -654,11 +626,122 @@
             .header-user { display: none; }
             .header-buttons { display: none; }
         }
+
+        /* Dashboard Selector Buttons */
+        .dashboard-select-btn {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+            padding: 20px;
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+
+        .dashboard-select-btn:hover {
+            border-color: #28a745;
+            background: #f8fff8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .dashboard-select-icon {
+            font-size: 32px;
+        }
+
+        .dashboard-select-info {
+            flex: 1;
+        }
+
+        .dashboard-select-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+
+        .dashboard-select-desc {
+            font-size: 13px;
+            color: #6c757d;
+        }
+
+        /* Add Item Form Styles */
+        .add-item-form {
+            background: #e8f5e9;
+            border: 1px solid #c8e6c9;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .add-item-form h4 {
+            margin: 0 0 15px 0;
+            color: #2e7d32;
+            font-size: 16px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .form-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-row select,
+        .form-row input[type="text"] {
+            flex: 1;
+            min-width: 150px;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-row button {
+            white-space: nowrap;
+        }
+
+        /* Items List Styles */
+        .items-list {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .items-list h4 {
+            margin: 0 0 15px 0;
+            color: #495057;
+            font-size: 15px;
+        }
+
+        .no-items-msg {
+            color: #6c757d;
+            font-style: italic;
+            padding: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .date-cell {
+            font-size: 12px;
+            color: #6c757d;
+            white-space: nowrap;
+        }
     </style>
 </head>
 <body>
     <!-- Login Page -->
-    <div id="loginPage" class="login-container">
+    <div id="loginPage" class="login-container" style="display: none;">
         <div class="login-box">
             <img src="data:image/webp;base64,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" alt="IG Logo" style="width: 100px; height: auto; display: block; margin: 0 auto 20px;">
             <p style="color: #6c757d; margin-bottom: 30px;">Weekly Multi-Client Account Control Dashboard</p>
@@ -686,6 +769,36 @@
         </div>
     </div>
 
+    <!-- Dashboard Selector Page (shown after login) -->
+    <div id="dashboardSelectorPage" class="login-container" style="display: none;">
+        <div class="login-box" style="max-width: 500px;">
+            <h1 style="font-size: 22px; margin-bottom: 10px;">Select Dashboard</h1>
+            <p style="color: #6c757d; margin-bottom: 30px;">Choose which dashboard you want to view</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                <button class="dashboard-select-btn" onclick="selectDashboard('local')">
+                    <div class="dashboard-select-icon">🇿🇦</div>
+                    <div class="dashboard-select-info">
+                        <div class="dashboard-select-title">Local Client Management</div>
+                        <div class="dashboard-select-desc">South African clients and campaigns</div>
+                    </div>
+                </button>
+                
+                <button class="dashboard-select-btn" onclick="selectDashboard('international')">
+                    <div class="dashboard-select-icon">🌍</div>
+                    <div class="dashboard-select-info">
+                        <div class="dashboard-select-title">International Client Management</div>
+                        <div class="dashboard-select-desc">International clients and campaigns</div>
+                    </div>
+                </button>
+            </div>
+            
+            <div style="margin-top: 30px; text-align: center;">
+                <button class="btn-logout" onclick="backToLogin()" style="padding: 10px 20px;">← Back to Login</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Dashboard (Hidden until logged in) -->
     <div id="dashboardPage" class="dashboard-container">
         <div class="container">
@@ -696,29 +809,19 @@
                         <h1>Weekly Account Control Dashboard</h1>
                     </div>
                     <div class="header-user">
-                        <div class="user-details">
-                            <span class="user-email" id="userEmail"></span>
-                            <span class="user-role" id="userRole"></span>
+                        <div class="user-box">
+                            <span class="user-name" id="userEmail"></span>
+                            <span class="user-role-badge" id="userRole"></span>
                         </div>
                         <div class="header-actions">
+                            <button class="btn-switch" onclick="switchDashboard()" title="Switch Dashboard">
+                                🔄 Switch
+                            </button>
                             <button class="btn-admin" onclick="showSection('admin')" id="adminNavBtn" style="display: none;">
                                 ⚙️ Admin
                             </button>
-                            <button class="btn-logout" onclick="logout()">Logout</button>
+                            <button class="btn-logout" onclick="logout()">🚪 Logout</button>
                         </div>
-                    </div>
-                </div>
-                
-                <!-- Bottom Row: Week Selector + Action Buttons -->
-                <div class="header-bottom">
-                    <div class="week-selector">
-                        <label>Week of:</label>
-                        <input type="date" id="weekDate" />
-                    </div>
-                    <div class="header-buttons">
-                        <button class="header-btn primary" onclick="saveData()" id="saveBtn">💾 Save</button>
-                        <button class="header-btn" onclick="exportData()" id="exportBtn">📥 Export</button>
-                        <button class="header-btn" onclick="window.print()">🖨️ Print</button>
                     </div>
                 </div>
             </header>
@@ -726,31 +829,31 @@
             <!-- Navigation Buttons -->
             <div class="nav-buttons">
                 <div class="nav-btn active" onclick="showSection('summary')">
-                    <div class="nav-btn-title">📈 Historical Trends</div>
+                    <div class="nav-btn-title">📈 History</div>
                     <div class="nav-btn-desc">Week-by-week view</div>
                 </div>
                 <div class="nav-btn" onclick="showSection('portfolio')">
-                    <div class="nav-btn-title">Portfolio Health</div>
+                    <div class="nav-btn-title">🎯 Portfolio</div>
                     <div class="nav-btn-desc">Traffic light overview</div>
                 </div>
                 <div class="nav-btn" onclick="showSection('exceptions')">
-                    <div class="nav-btn-title">Exceptions</div>
+                    <div class="nav-btn-title">⚠️ Exceptions</div>
                     <div class="nav-btn-desc">Issues to fix this week</div>
                 </div>
                 <div class="nav-btn" onclick="showSection('risks')">
-                    <div class="nav-btn-title">Risks</div>
+                    <div class="nav-btn-title">🚨 Risks</div>
                     <div class="nav-btn-desc">Early warning log</div>
                 </div>
                 <div class="nav-btn" onclick="showSection('relationships')">
-                    <div class="nav-btn-title">Relationships</div>
+                    <div class="nav-btn-title">🤝 Relationships</div>
                     <div class="nav-btn-desc">Temperature check</div>
                 </div>
                 <div class="nav-btn" onclick="showSection('growth')">
-                    <div class="nav-btn-title">Growth</div>
-                    <div class="nav-btn-desc">Commercial movement</div>
+                    <div class="nav-btn-title">💰 Growth</div>
+                    <div class="nav-btn-desc">Financial movement</div>
                 </div>
                 <div class="nav-btn" onclick="showSection('commitments')">
-                    <div class="nav-btn-title">Commitments</div>
+                    <div class="nav-btn-title">✅ Commitments</div>
                     <div class="nav-btn-desc">Accountability & escalations</div>
                 </div>
             </div>
@@ -761,11 +864,11 @@
                 <p style="margin-top: 5px;">You have view-only access. Contact your administrator to request edit permissions.</p>
             </div>
 
-            <!-- SUMMARY PAGE: Historical Trends -->
+            <!-- SUMMARY PAGE: Weekly Performance History -->
             <div class="section active" id="summary">
                 <div class="section-header">
                     <div class="section-title">
-                        <h2>📈 Historical Trends Summary</h2>
+                        <h2>📈 Weekly Performance History Summary</h2>
                         <div class="section-purpose">Week-by-week portfolio health across all clients</div>
                     </div>
                 </div>
@@ -800,11 +903,13 @@
                 <div style="background: #e7f5ff; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #007bff;">
                     <div style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
                         <div>
-                            <label><strong>Week Commencing:</strong></label>
-                            <input type="date" id="weekDate" onchange="loadWeekData()" style="margin-left: 10px; padding: 8px;">
+                            <label><strong>Select Week:</strong></label>
+                            <select id="weekDate" onchange="loadWeekData()" style="margin-left: 10px; padding: 10px 15px; font-size: 14px; min-width: 280px;">
+                                <!-- Populated by JavaScript -->
+                            </select>
                         </div>
-                        <div style="color: #6c757d; font-size: 14px;">
-                            Select the Monday of the week you're capturing data for
+                        <div id="weekStatus" style="color: #6c757d; font-size: 14px;">
+                            Select a week to capture or view data
                         </div>
                     </div>
                 </div>
@@ -816,7 +921,7 @@
                             <tr>
                                 <th>Client</th>
                                 <th>Campaign</th>
-                                <th style="text-align: center;">Commercial</th>
+                                <th style="text-align: center;">Financial</th>
                                 <th style="text-align: center;">Ops</th>
                                 <th style="text-align: center;">Relationship</th>
                                 <th style="text-align: center;">Growth</th>
@@ -835,10 +940,7 @@
                 </div>
 
                 <!-- Save Button -->
-                <div style="margin-top: 20px; padding: 20px; background: #f8f9fa; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
-                    <div style="color: #6c757d; font-size: 14px;">
-                        <span id="lastSavedInfo">Not saved yet</span>
-                    </div>
+                <div style="margin-top: 20px; padding: 20px; background: #f8f9fa; border-radius: 8px; text-align: right;">
                     <button class="btn btn-success" onclick="savePortfolioData()" style="padding: 12px 30px; font-size: 16px;">
                         💾 Save Week Data
                     </button>
@@ -862,41 +964,59 @@
             <div class="section" id="exceptions">
                 <div class="section-header">
                     <div class="section-title">
-                        <h2>Weekly Exceptions Register (Across All Clients)</h2>
-                        <div class="section-purpose">Force focus.</div>
+                        <h2>⚠️ Weekly Exceptions Register</h2>
+                        <div class="section-purpose">Force focus on issues that need attention this week.</div>
                     </div>
                 </div>
                 
-                <table id="exceptionsTable">
-                    <thead>
-                        <tr>
-                            <th>Client</th>
-                            <th>Campaign</th>
-                            <th>Issue</th>
-                            <th>Severity</th>
-                            <th>Root Cause</th>
-                            <th>Action This Week</th>
-                            <th>Owner</th>
-                            <th style="width: 80px;" id="exceptionsActionsHeader"></th>
-                        </tr>
-                    </thead>
-                    <tbody id="exceptionsBody">
-                    </tbody>
-                </table>
-                
-                <div class="action-buttons">
-                    <button class="btn btn-success" onclick="addExceptionRow()" id="addExceptionBtn">+ Add Exception</button>
+                <!-- Add New Exception Form -->
+                <div class="add-item-form" id="addExceptionForm">
+                    <h4>+ Add New Exception</h4>
+                    <div class="form-row">
+                        <select id="newExceptionClient" onchange="updateCampaignDropdown('newExceptionCampaign', this.value)">
+                            <option value="">Select Client...</option>
+                        </select>
+                        <select id="newExceptionCampaign">
+                            <option value="">Select Campaign...</option>
+                        </select>
+                        <input type="text" id="newExceptionIssue" placeholder="Issue description">
+                        <select id="newExceptionSeverity">
+                            <option value="High">High</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Low">Low</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <input type="text" id="newExceptionRootCause" placeholder="Root cause">
+                        <input type="text" id="newExceptionAction" placeholder="Action this week">
+                        <input type="text" id="newExceptionOwner" placeholder="Owner">
+                        <button class="btn btn-success" onclick="addExceptionRow()" id="addExceptionBtn">+ Add</button>
+                    </div>
                 </div>
 
-                <div class="rules">
-                    <strong>Rules:</strong>
-                    <ul>
-                        <li>Only new or unresolved issues appear</li>
-                        <li>No historic storytelling</li>
-                        <li>Closed issues drop off</li>
-                    </ul>
+                <!-- Exceptions List -->
+                <div class="items-list">
+                    <h4>Current Exceptions (<span id="exceptionsCount">0</span>)</h4>
+                    <table id="exceptionsTable">
+                        <thead>
+                            <tr>
+                                <th style="width: 90px;">Date Added</th>
+                                <th>Client</th>
+                                <th>Campaign</th>
+                                <th>Issue</th>
+                                <th>Severity</th>
+                                <th>Root Cause</th>
+                                <th>Action</th>
+                                <th>Owner</th>
+                                <th style="width: 70px;" id="exceptionsActionsHeader">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="exceptionsBody">
+                        </tbody>
+                    </table>
+                    <div id="noExceptionsMsg" class="no-items-msg">No exceptions logged yet.</div>
                 </div>
-                
+
                 <div class="section-question">
                     "What are we fixing this week?"
                 </div>
@@ -906,37 +1026,60 @@
             <div class="section" id="risks">
                 <div class="section-header">
                     <div class="section-title">
-                        <h2>Risk Early-Warning Log</h2>
-                        <div class="section-purpose">Look ahead, not back.</div>
+                        <h2>🚨 Risk Early-Warning Log</h2>
+                        <div class="section-purpose">Look ahead, not back. Identify what could blindside us.</div>
                     </div>
                 </div>
                 
-                <table id="risksTable">
-                    <thead>
-                        <tr>
-                            <th>Client</th>
-                            <th>Campaign</th>
-                            <th>Risk</th>
-                            <th>Time Horizon</th>
-                            <th>Likelihood</th>
-                            <th>Action</th>
-                            <th style="width: 80px;" id="risksActionsHeader"></th>
-                        </tr>
-                    </thead>
-                    <tbody id="risksBody">
-                    </tbody>
-                </table>
-                
-                <div class="action-buttons">
-                    <button class="btn btn-success" onclick="addRiskRow()" id="addRiskBtn">+ Add Risk</button>
+                <!-- Add New Risk Form -->
+                <div class="add-item-form" id="addRiskForm">
+                    <h4>+ Add New Risk</h4>
+                    <div class="form-row">
+                        <select id="newRiskClient" onchange="updateCampaignDropdown('newRiskCampaign', this.value)">
+                            <option value="">Select Client...</option>
+                        </select>
+                        <select id="newRiskCampaign">
+                            <option value="">Select Campaign...</option>
+                        </select>
+                        <input type="text" id="newRiskDescription" placeholder="Risk description">
+                    </div>
+                    <div class="form-row">
+                        <select id="newRiskTimeHorizon">
+                            <option value="0-30 days">0-30 days</option>
+                            <option value="30-60 days">30-60 days</option>
+                            <option value="60-90 days" selected>60-90 days</option>
+                            <option value="90+ days">90+ days</option>
+                        </select>
+                        <select id="newRiskLikelihood">
+                            <option value="High">High</option>
+                            <option value="Medium" selected>Medium</option>
+                            <option value="Low">Low</option>
+                        </select>
+                        <input type="text" id="newRiskAction" placeholder="Mitigation action">
+                        <button class="btn btn-success" onclick="addRiskRow()" id="addRiskBtn">+ Add</button>
+                    </div>
                 </div>
 
-                <div class="rules">
-                    <strong>Rules:</strong>
-                    <ul>
-                        <li>Risks ≠ issues</li>
-                        <li>If it happens, it moves to Page 2 next week</li>
-                    </ul>
+                <!-- Risks List -->
+                <div class="items-list">
+                    <h4>Current Risks (<span id="risksCount">0</span>)</h4>
+                    <table id="risksTable">
+                        <thead>
+                            <tr>
+                                <th style="width: 90px;">Date Added</th>
+                                <th>Client</th>
+                                <th>Campaign</th>
+                                <th>Risk</th>
+                                <th>Time Horizon</th>
+                                <th>Likelihood</th>
+                                <th>Action</th>
+                                <th style="width: 70px;" id="risksActionsHeader">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="risksBody">
+                        </tbody>
+                    </table>
+                    <div id="noRisksMsg" class="no-items-msg">No risks logged yet.</div>
                 </div>
                 
                 <div class="section-question">
@@ -948,37 +1091,59 @@
             <div class="section" id="relationships">
                 <div class="section-header">
                     <div class="section-title">
-                        <h2>Relationship Temperature Check</h2>
-                        <div class="section-purpose">Political control.</div>
+                        <h2>🤝 Relationship Temperature Check</h2>
+                        <div class="section-purpose">Political control. Track stakeholder sentiment.</div>
                     </div>
                 </div>
                 
-                <table id="relationshipsTable">
-                    <thead>
-                        <tr>
-                            <th>Client</th>
-                            <th>Campaign</th>
-                            <th>Stakeholder</th>
-                            <th>Sentiment</th>
-                            <th>Change vs Last Week</th>
-                            <th>Action</th>
-                            <th style="width: 80px;" id="relationshipsActionsHeader"></th>
-                        </tr>
-                    </thead>
-                </table>
-                <tbody id="relationshipsBody">
-                </tbody>
-                
-                <div class="action-buttons">
-                    <button class="btn btn-success" onclick="addRelationshipRow()" id="addRelationshipBtn">+ Add Stakeholder</button>
+                <!-- Add New Relationship Form -->
+                <div class="add-item-form" id="addRelationshipForm">
+                    <h4>+ Add New Stakeholder</h4>
+                    <div class="form-row">
+                        <select id="newRelationshipClient" onchange="updateCampaignDropdown('newRelationshipCampaign', this.value)">
+                            <option value="">Select Client...</option>
+                        </select>
+                        <select id="newRelationshipCampaign">
+                            <option value="">Select Campaign...</option>
+                        </select>
+                        <input type="text" id="newRelationshipStakeholder" placeholder="Stakeholder name/role">
+                    </div>
+                    <div class="form-row">
+                        <select id="newRelationshipSentiment">
+                            <option value="Positive">Positive</option>
+                            <option value="Neutral" selected>Neutral</option>
+                            <option value="Negative">Negative</option>
+                        </select>
+                        <select id="newRelationshipChange">
+                            <option value="↑">↑ Improving</option>
+                            <option value="→" selected>→ Stable</option>
+                            <option value="↓">↓ Deteriorating</option>
+                        </select>
+                        <input type="text" id="newRelationshipAction" placeholder="Action to take">
+                        <button class="btn btn-success" onclick="addRelationshipRow()" id="addRelationshipBtn">+ Add</button>
+                    </div>
                 </div>
 
-                <div class="rules">
-                    <strong>Rules:</strong>
-                    <ul>
-                        <li>Sentiment must move (static = lazy)</li>
-                        <li>Only exceptions discussed</li>
-                    </ul>
+                <!-- Relationships List -->
+                <div class="items-list">
+                    <h4>Current Stakeholders (<span id="relationshipsCount">0</span>)</h4>
+                    <table id="relationshipsTable">
+                        <thead>
+                            <tr>
+                                <th style="width: 90px;">Date Added</th>
+                                <th>Client</th>
+                                <th>Campaign</th>
+                                <th>Stakeholder</th>
+                                <th>Sentiment</th>
+                                <th>Change</th>
+                                <th>Action</th>
+                                <th style="width: 70px;" id="relationshipsActionsHeader">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="relationshipsBody">
+                        </tbody>
+                    </table>
+                    <div id="noRelationshipsMsg" class="no-items-msg">No stakeholders logged yet.</div>
                 </div>
                 
                 <div class="section-question">
@@ -986,40 +1151,53 @@
                 </div>
             </div>
 
-            <!-- Growth & Commercial Movement -->
+            <!-- Growth & Financial Movement -->
             <div class="section" id="growth">
                 <div class="section-header">
                     <div class="section-title">
-                        <h2>Growth & Commercial Movement (Very Light)</h2>
-                        <div class="section-purpose">Prevent stagnation.</div>
+                        <h2>💰 Growth & Financial Movement</h2>
+                        <div class="section-purpose">Prevent stagnation. Track opportunities and blockers.</div>
                     </div>
                 </div>
                 
-                <table id="growthTable">
-                    <thead>
-                        <tr>
-                            <th>Client</th>
-                            <th>Campaign</th>
-                            <th>Opportunity</th>
-                            <th>Movement This Week</th>
-                            <th>Blocker</th>
-                            <th style="width: 80px;" id="growthActionsHeader"></th>
-                        </tr>
-                    </thead>
-                    <tbody id="growthBody">
-                    </tbody>
-                </table>
-                
-                <div class="action-buttons">
-                    <button class="btn btn-success" onclick="addGrowthRow()" id="addGrowthBtn">+ Add Opportunity</button>
+                <!-- Add New Growth Form -->
+                <div class="add-item-form" id="addGrowthForm">
+                    <h4>+ Add New Opportunity</h4>
+                    <div class="form-row">
+                        <select id="newGrowthClient" onchange="updateCampaignDropdown('newGrowthCampaign', this.value)">
+                            <option value="">Select Client...</option>
+                        </select>
+                        <select id="newGrowthCampaign">
+                            <option value="">Select Campaign...</option>
+                        </select>
+                        <input type="text" id="newGrowthOpportunity" placeholder="Opportunity description">
+                    </div>
+                    <div class="form-row">
+                        <input type="text" id="newGrowthMovement" placeholder="Movement this week">
+                        <input type="text" id="newGrowthBlocker" placeholder="Blocker (if any)">
+                        <button class="btn btn-success" onclick="addGrowthRow()" id="addGrowthBtn">+ Add</button>
+                    </div>
                 </div>
 
-                <div class="rules">
-                    <strong>Rules:</strong>
-                    <ul>
-                        <li>No movement = red flag</li>
-                        <li>Growth is expected to move every week (even small steps)</li>
-                    </ul>
+                <!-- Growth List -->
+                <div class="items-list">
+                    <h4>Current Opportunities (<span id="growthCount">0</span>)</h4>
+                    <table id="growthTable">
+                        <thead>
+                            <tr>
+                                <th style="width: 90px;">Date Added</th>
+                                <th>Client</th>
+                                <th>Campaign</th>
+                                <th>Opportunity</th>
+                                <th>Movement</th>
+                                <th>Blocker</th>
+                                <th style="width: 70px;" id="growthActionsHeader">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="growthBody">
+                        </tbody>
+                    </table>
+                    <div id="noGrowthMsg" class="no-items-msg">No opportunities logged yet.</div>
                 </div>
                 
                 <div class="section-question">
@@ -1113,6 +1291,19 @@
                             </select>
                         </div>
                         <div class="form-group">
+                            <label>Dashboard Access</label>
+                            <div style="display: flex; gap: 20px; margin-top: 8px;">
+                                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                    <input type="checkbox" id="newUserLocalAccess" checked style="width: 18px; height: 18px;">
+                                    <span>🇿🇦 Local</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                    <input type="checkbox" id="newUserInternationalAccess" style="width: 18px; height: 18px;">
+                                    <span>🌍 International</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label>Temporary Password</label>
                             <input type="text" id="newUserPassword" placeholder="Create a temporary password">
                         </div>
@@ -1125,8 +1316,8 @@
                             <tr>
                                 <th>Email</th>
                                 <th>Role</th>
+                                <th>Dashboard Access</th>
                                 <th>Status</th>
-                                <th>Added Date</th>
                                 <th style="width: 200px;">Actions</th>
                             </tr>
                         </thead>
@@ -1190,8 +1381,105 @@
 
         // ===== INITIALIZATION =====
         window.onload = function() {
-            // Nothing to initialize for password login
+            // TEMP: Bypass login for testing
+            currentUser = {
+                email: 'admin@test.com',
+                role: 'Admin',
+                dashboardAccess: 'local,international',
+                permissions: {
+                    canView: true,
+                    canEdit: true,
+                    canDelete: true,
+                    canManageUsers: true,
+                    canExport: true
+                }
+            };
+            
+            // TEMP: Skip selector, go straight to local dashboard
+            selectedDashboardType = 'local';
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('dashboardSelectorPage').style.display = 'none';
+            document.getElementById('dashboardPage').style.display = 'block';
+            
+            document.getElementById('userEmail').textContent = currentUser.email;
+            document.getElementById('userRole').textContent = currentUser.role;
+            document.querySelector('.header-brand h1').innerHTML = '🇿🇦 Local Client Management';
+            document.getElementById('adminNavBtn').style.display = 'flex';
+            
+            // Load config and data
+            loadConfiguration();
+            populateWeekSelector();
+            renderAllTables();
         };
+
+        // Dashboard type selection
+        let selectedDashboardType = 'local'; // 'local' or 'international'
+
+        function showDashboardSelector() {
+            // Check user's dashboard access
+            const access = currentUser.dashboardAccess || 'local';
+            const hasLocal = access.includes('local');
+            const hasInternational = access.includes('international');
+            
+            // If user only has one dashboard access, go directly to it
+            if (hasLocal && !hasInternational) {
+                selectDashboard('local');
+                return;
+            }
+            if (hasInternational && !hasLocal) {
+                selectDashboard('international');
+                return;
+            }
+            
+            // Show/hide buttons based on access
+            const localBtn = document.querySelector('.dashboard-select-btn[onclick*="local"]');
+            const intlBtn = document.querySelector('.dashboard-select-btn[onclick*="international"]');
+            
+            if (localBtn) localBtn.style.display = hasLocal ? 'flex' : 'none';
+            if (intlBtn) intlBtn.style.display = hasInternational ? 'flex' : 'none';
+            
+            // Show selector
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('dashboardSelectorPage').style.display = 'flex';
+        }
+
+        function selectDashboard(type) {
+            selectedDashboardType = type;
+            
+            // Hide selector, show dashboard
+            document.getElementById('dashboardSelectorPage').style.display = 'none';
+            document.getElementById('dashboardPage').style.display = 'block';
+            
+            // Update header to show which dashboard
+            document.getElementById('userEmail').textContent = currentUser.email;
+            document.getElementById('userRole').textContent = currentUser.role;
+            
+            // Update dashboard title based on selection
+            const dashboardTitle = type === 'local' ? '🇿🇦 Local Client Management' : '🌍 International Client Management';
+            document.querySelector('.header-brand h1').innerHTML = dashboardTitle;
+            
+            // Show admin button if admin
+            if (currentUser.role === 'Admin') {
+                document.getElementById('adminNavBtn').style.display = 'flex';
+            }
+            
+            // Load config and data for selected dashboard type
+            loadConfiguration();
+            populateWeekSelector();
+            renderAllTables();
+        }
+
+        function backToLogin() {
+            document.getElementById('dashboardSelectorPage').style.display = 'none';
+            document.getElementById('loginPage').style.display = 'flex';
+            currentUser = null;
+        }
+
+        function switchDashboard() {
+            // Go back to dashboard selector
+            document.getElementById('dashboardPage').style.display = 'none';
+            document.getElementById('dashboardSelectorPage').style.display = 'flex';
+        }
 
         async function handleLogin(event) {
             event.preventDefault();
@@ -1326,7 +1614,9 @@
 
         function logout() {
             currentUser = null;
+            selectedDashboardType = 'local';
             document.getElementById('dashboardPage').style.display = 'none';
+            document.getElementById('dashboardSelectorPage').style.display = 'none';
             document.getElementById('loginPage').style.display = 'flex';
             document.getElementById('loginEmail').value = '';
             document.getElementById('loginPassword').value = '';
@@ -1408,12 +1698,14 @@
 
         async function loadArchiveData() {
             try {
-                const url = `${SCRIPT_URL}?action=loadArchive&userEmail=${encodeURIComponent(currentUser.email)}`;
+                const url = `${SCRIPT_URL}?action=loadAllPortfolioWeeks&userEmail=${encodeURIComponent(currentUser.email)}`;
                 const response = await fetch(url);
                 weeklyArchive = await response.json();
                 if (!Array.isArray(weeklyArchive)) {
                     weeklyArchive = [];
                 }
+                // Sort by date descending (newest first)
+                weeklyArchive.sort((a, b) => new Date(b.weekDate) - new Date(a.weekDate));
             } catch (error) {
                 console.error('Error loading archive:', error);
                 weeklyArchive = [];
@@ -1459,12 +1751,61 @@
         }
 
         function setCurrentWeek() {
+            populateWeekSelector();
+        }
+
+        function populateWeekSelector() {
+            const select = document.getElementById('weekDate');
+            select.innerHTML = '';
+            
+            // Generate weeks for the past 12 weeks and next 4 weeks
             const today = new Date();
-            const monday = new Date(today);
-            monday.setDate(today.getDate() - today.getDay() + 1);
-            document.getElementById('weekDate').value = monday.toISOString().split('T')[0];
+            const weeks = [];
+            
+            // Start from 12 weeks ago
+            for (let i = -12; i <= 4; i++) {
+                const weekStart = new Date(today);
+                // Get Monday of that week
+                const dayOfWeek = today.getDay();
+                const diff = (dayOfWeek === 0 ? -6 : 1) - dayOfWeek; // Adjust to Monday
+                weekStart.setDate(today.getDate() + diff + (i * 7));
+                
+                const weekNum = getWeekNumber(weekStart);
+                const dateStr = weekStart.toISOString().split('T')[0];
+                const displayDate = formatDateShort(weekStart);
+                
+                weeks.push({
+                    value: dateStr,
+                    label: `Week ${weekNum} - ${displayDate}`,
+                    isCurrent: i === 0
+                });
+            }
+            
+            weeks.forEach(week => {
+                const option = document.createElement('option');
+                option.value = week.value;
+                option.textContent = week.label + (week.isCurrent ? ' (Current)' : '');
+                if (week.isCurrent) {
+                    option.selected = true;
+                }
+                select.appendChild(option);
+            });
+            
             // Load data for current week
             loadWeekData();
+        }
+
+        function getWeekNumber(date) {
+            const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+            const dayNum = d.getUTCDay() || 7;
+            d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+            const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+            return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+        }
+
+        function formatDateShort(date) {
+            const options = { day: 'numeric', month: 'short', year: 'numeric' };
+            return date.toLocaleDateString('en-GB', options);
         }
 
         // ===== TRAFFIC LIGHTS =====
@@ -1503,7 +1844,7 @@
 
         function calculateOverallStatus(index) {
             const row = dashboardData.portfolio[index];
-            const statuses = [row.commercial, row.ops, row.relationship, row.growth];
+            const statuses = [row.financial, row.ops, row.relationship, row.growth];
             
             if (statuses.includes('red')) {
                 row.overall = 'red';
@@ -1525,7 +1866,7 @@
             const newRow = {
                 client: '',
                 campaign: '',
-                commercial: 'green',
+                financial: 'green',
                 ops: 'green',
                 relationship: 'green',
                 growth: 'green',
@@ -1576,7 +1917,7 @@
                     tr.innerHTML = `
                         <td><strong>${clientName}</strong></td>
                         <td style="color: #999; font-style: italic;">No campaigns</td>
-                        <td class="traffic-light-cell">${createConfigTrafficLight(clientName, '', 'commercial', existingData.commercial)}</td>
+                        <td class="traffic-light-cell">${createConfigTrafficLight(clientName, '', 'financial', existingData.financial)}</td>
                         <td class="traffic-light-cell">${createConfigTrafficLight(clientName, '', 'ops', existingData.ops)}</td>
                         <td class="traffic-light-cell">${createConfigTrafficLight(clientName, '', 'relationship', existingData.relationship)}</td>
                         <td class="traffic-light-cell">${createConfigTrafficLight(clientName, '', 'growth', existingData.growth)}</td>
@@ -1591,7 +1932,7 @@
                         tr.innerHTML = `
                             <td>${idx === 0 ? '<strong>' + clientName + '</strong>' : ''}</td>
                             <td>${campaignName}</td>
-                            <td class="traffic-light-cell">${createConfigTrafficLight(clientName, campaignName, 'commercial', existingData.commercial)}</td>
+                            <td class="traffic-light-cell">${createConfigTrafficLight(clientName, campaignName, 'financial', existingData.financial)}</td>
                             <td class="traffic-light-cell">${createConfigTrafficLight(clientName, campaignName, 'ops', existingData.ops)}</td>
                             <td class="traffic-light-cell">${createConfigTrafficLight(clientName, campaignName, 'relationship', existingData.relationship)}</td>
                             <td class="traffic-light-cell">${createConfigTrafficLight(clientName, campaignName, 'growth', existingData.growth)}</td>
@@ -1606,12 +1947,12 @@
         // Find existing portfolio data for a client/campaign
         function findPortfolioData(client, campaign) {
             const existing = dashboardData.portfolio.find(p => p.client === client && p.campaign === campaign);
-            return existing || { commercial: 'grey', ops: 'grey', relationship: 'grey', growth: 'grey', overall: 'grey' };
+            return existing || { financial: 'grey', ops: 'grey', relationship: 'grey', growth: 'grey', overall: 'grey' };
         }
 
         // Calculate overall status from data object
         function calculateOverallFromData(data) {
-            const statuses = [data.commercial, data.ops, data.relationship, data.growth];
+            const statuses = [data.financial, data.ops, data.relationship, data.growth];
             if (statuses.includes('red')) return 'red';
             if (statuses.includes('amber')) return 'amber';
             if (statuses.every(s => s === 'green')) return 'green';
@@ -1648,7 +1989,7 @@
                 entry = {
                     client: client,
                     campaign: campaign,
-                    commercial: 'grey',
+                    financial: 'grey',
                     ops: 'grey',
                     relationship: 'grey',
                     growth: 'grey',
@@ -1677,14 +2018,32 @@
                 return;
             }
             
+            // Check if data already exists for this week
+            try {
+                const checkUrl = `${SCRIPT_URL}?action=loadPortfolio&userEmail=${encodeURIComponent(currentUser.email)}&weekDate=${encodeURIComponent(weekDate)}`;
+                const checkResponse = await fetch(checkUrl);
+                const existingData = await checkResponse.json();
+                
+                if (existingData && Array.isArray(existingData) && existingData.length > 0) {
+                    alert('❌ Data already exists for week of ' + weekDate + '\n\nYou cannot overwrite historical data. Please select a different week.');
+                    return;
+                }
+            } catch (error) {
+                console.error('Error checking existing data:', error);
+            }
+            
             try {
                 const url = `${SCRIPT_URL}?action=savePortfolio&userEmail=${encodeURIComponent(currentUser.email)}&weekDate=${encodeURIComponent(weekDate)}&data=${encodeURIComponent(JSON.stringify(dashboardData.portfolio))}`;
                 const response = await fetch(url);
                 const result = await response.json();
                 
                 if (result.success) {
-                    document.getElementById('lastSavedInfo').innerHTML = `✅ Saved for week of ${weekDate} at ${new Date().toLocaleTimeString()}`;
+                    document.getElementById('weekStatus').innerHTML = `✅ Saved for week of ${weekDate} at ${new Date().toLocaleTimeString()}`;
                     alert('✅ Week data saved successfully!');
+                    
+                    // Reload archive data to update historical trends
+                    await loadArchiveData();
+                    renderSummaryView();
                 } else {
                     alert('❌ Error: ' + (result.error || 'Failed to save'));
                 }
@@ -1703,13 +2062,16 @@
                 const response = await fetch(url);
                 const data = await response.json();
                 
-                if (data && Array.isArray(data)) {
+                if (data && Array.isArray(data) && data.length > 0) {
                     dashboardData.portfolio = data;
-                    document.getElementById('lastSavedInfo').innerHTML = `📅 Loaded data for week of ${weekDate}`;
+                    document.getElementById('weekStatus').innerHTML = `🔒 Data for week of ${weekDate} is locked (already saved)`;
+                    // Disable save button for this week
+                    disablePortfolioEditing(true);
                 } else {
                     // No data for this week - start fresh
                     dashboardData.portfolio = [];
-                    document.getElementById('lastSavedInfo').innerHTML = `📅 No existing data for week of ${weekDate} - start fresh`;
+                    document.getElementById('weekStatus').innerHTML = `📝 New week - enter data and save`;
+                    disablePortfolioEditing(false);
                 }
                 
                 renderPortfolioTable();
@@ -1720,24 +2082,97 @@
             }
         }
 
+        // Enable/disable portfolio editing based on whether data exists
+        function disablePortfolioEditing(locked) {
+            const saveBtn = document.querySelector('#portfolio .btn-success');
+            if (saveBtn) {
+                if (locked) {
+                    saveBtn.disabled = true;
+                    saveBtn.textContent = '🔒 Week Locked';
+                    saveBtn.style.background = '#6c757d';
+                } else {
+                    saveBtn.disabled = false;
+                    saveBtn.textContent = '💾 Save Week Data';
+                    saveBtn.style.background = '#28a745';
+                }
+            }
+        }
+
         function updatePortfolioField(index, field, value) {
             if (!currentUser.permissions.canEdit) return;
             dashboardData.portfolio[index][field] = value;
+        }
+
+        // Helper function to generate client dropdown options
+        function getClientOptions(selectedClient) {
+            const clients = Object.keys(clientCampaignConfig).sort();
+            let options = '<option value="">Select Client...</option>';
+            clients.forEach(client => {
+                options += `<option value="${client}" ${client === selectedClient ? 'selected' : ''}>${client}</option>`;
+            });
+            return options;
+        }
+
+        // Helper function to generate campaign dropdown options for a client
+        function getCampaignOptions(client, selectedCampaign) {
+            let options = '<option value="">Select Campaign...</option>';
+            if (client && clientCampaignConfig[client]) {
+                clientCampaignConfig[client].forEach(campaign => {
+                    options += `<option value="${campaign}" ${campaign === selectedCampaign ? 'selected' : ''}>${campaign}</option>`;
+                });
+            }
+            return options;
+        }
+
+        // Update campaign dropdown when client changes
+        function updateCampaignDropdown(selectId, client) {
+            const campaignSelect = document.getElementById(selectId);
+            if (campaignSelect) {
+                campaignSelect.innerHTML = getCampaignOptions(client, '');
+            }
         }
 
         // ===== EXCEPTIONS FUNCTIONS =====
         function addExceptionRow() {
             if (!currentUser.permissions.canEdit) return;
 
+            const client = document.getElementById('newExceptionClient').value;
+            const campaign = document.getElementById('newExceptionCampaign').value;
+            const issue = document.getElementById('newExceptionIssue').value.trim();
+            const severity = document.getElementById('newExceptionSeverity').value;
+            const rootCause = document.getElementById('newExceptionRootCause').value.trim();
+            const action = document.getElementById('newExceptionAction').value.trim();
+            const owner = document.getElementById('newExceptionOwner').value.trim();
+
+            if (!client) {
+                alert('Please select a client');
+                return;
+            }
+            if (!issue) {
+                alert('Please enter an issue description');
+                return;
+            }
+
             dashboardData.exceptions.push({
-                client: '',
-                campaign: '',
-                issue: '',
-                severity: 'High',
-                rootCause: '',
-                action: '',
-                owner: ''
+                dateAdded: new Date().toISOString(),
+                client: client,
+                campaign: campaign,
+                issue: issue,
+                severity: severity,
+                rootCause: rootCause,
+                action: action,
+                owner: owner
             });
+
+            // Clear form
+            document.getElementById('newExceptionClient').value = '';
+            document.getElementById('newExceptionCampaign').innerHTML = '<option value="">Select Campaign...</option>';
+            document.getElementById('newExceptionIssue').value = '';
+            document.getElementById('newExceptionSeverity').value = 'High';
+            document.getElementById('newExceptionRootCause').value = '';
+            document.getElementById('newExceptionAction').value = '';
+            document.getElementById('newExceptionOwner').value = '';
+
             renderExceptionsTable();
         }
 
@@ -1755,13 +2190,25 @@
             const canEdit = currentUser.permissions.canEdit;
             const canDelete = currentUser.permissions.canDelete;
             tbody.innerHTML = '';
+
+            // Update count
+            document.getElementById('exceptionsCount').textContent = dashboardData.exceptions.length;
+
+            // Show/hide no items message
+            document.getElementById('noExceptionsMsg').style.display = dashboardData.exceptions.length === 0 ? 'block' : 'none';
+            document.getElementById('exceptionsTable').style.display = dashboardData.exceptions.length === 0 ? 'none' : 'table';
+
+            // Populate client dropdown in form
+            document.getElementById('newExceptionClient').innerHTML = getClientOptions('');
             
             dashboardData.exceptions.forEach((row, index) => {
                 const tr = document.createElement('tr');
+                const dateStr = row.dateAdded ? formatDateShort(new Date(row.dateAdded)) : '-';
                 tr.innerHTML = `
-                    <td><input type="text" value="${row.client}" onchange="dashboardData.exceptions[${index}].client = this.value" ${!canEdit ? 'disabled' : ''}></td>
-                    <td><input type="text" value="${row.campaign || ''}" onchange="dashboardData.exceptions[${index}].campaign = this.value" ${!canEdit ? 'disabled' : ''}></td>
-                    <td><input type="text" value="${row.issue}" onchange="dashboardData.exceptions[${index}].issue = this.value" ${!canEdit ? 'disabled' : ''}></td>
+                    <td class="date-cell">${dateStr}</td>
+                    <td>${row.client || '-'}</td>
+                    <td>${row.campaign || '-'}</td>
+                    <td>${row.issue || '-'}</td>
                     <td>
                         <select onchange="dashboardData.exceptions[${index}].severity = this.value" ${!canEdit ? 'disabled' : ''}>
                             <option ${row.severity === 'High' ? 'selected' : ''}>High</option>
@@ -1769,27 +2216,54 @@
                             <option ${row.severity === 'Low' ? 'selected' : ''}>Low</option>
                         </select>
                     </td>
-                    <td><input type="text" value="${row.rootCause}" onchange="dashboardData.exceptions[${index}].rootCause = this.value" ${!canEdit ? 'disabled' : ''}></td>
-                    <td><input type="text" value="${row.action}" onchange="dashboardData.exceptions[${index}].action = this.value" ${!canEdit ? 'disabled' : ''}></td>
-                    <td><input type="text" value="${row.owner}" onchange="dashboardData.exceptions[${index}].owner = this.value" ${!canEdit ? 'disabled' : ''}></td>
-                    <td style="${!canDelete ? 'display:none' : ''}"><button class="btn btn-danger" onclick="deleteExceptionRow(${index})" ${!canDelete ? 'disabled' : ''}>Delete</button></td>
+                    <td><input type="text" value="${row.rootCause || ''}" onchange="dashboardData.exceptions[${index}].rootCause = this.value" ${!canEdit ? 'disabled' : ''}></td>
+                    <td><input type="text" value="${row.action || ''}" onchange="dashboardData.exceptions[${index}].action = this.value" ${!canEdit ? 'disabled' : ''}></td>
+                    <td><input type="text" value="${row.owner || ''}" onchange="dashboardData.exceptions[${index}].owner = this.value" ${!canEdit ? 'disabled' : ''}></td>
+                    <td style="${!canDelete ? 'display:none' : ''}"><button class="btn btn-danger" onclick="deleteExceptionRow(${index})">Delete</button></td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
         // ===== RISKS FUNCTIONS =====
+        // ===== RISKS FUNCTIONS =====
         function addRiskRow() {
             if (!currentUser.permissions.canEdit) return;
 
+            const client = document.getElementById('newRiskClient').value;
+            const campaign = document.getElementById('newRiskCampaign').value;
+            const risk = document.getElementById('newRiskDescription').value.trim();
+            const timeHorizon = document.getElementById('newRiskTimeHorizon').value;
+            const likelihood = document.getElementById('newRiskLikelihood').value;
+            const action = document.getElementById('newRiskAction').value.trim();
+
+            if (!client) {
+                alert('Please select a client');
+                return;
+            }
+            if (!risk) {
+                alert('Please enter a risk description');
+                return;
+            }
+
             dashboardData.risks.push({
-                client: '',
-                campaign: '',
-                risk: '',
-                timeHorizon: '60-90 days',
-                likelihood: 'Medium',
-                action: ''
+                dateAdded: new Date().toISOString(),
+                client: client,
+                campaign: campaign,
+                risk: risk,
+                timeHorizon: timeHorizon,
+                likelihood: likelihood,
+                action: action
             });
+
+            // Clear form
+            document.getElementById('newRiskClient').value = '';
+            document.getElementById('newRiskCampaign').innerHTML = '<option value="">Select Campaign...</option>';
+            document.getElementById('newRiskDescription').value = '';
+            document.getElementById('newRiskTimeHorizon').value = '60-90 days';
+            document.getElementById('newRiskLikelihood').value = 'Medium';
+            document.getElementById('newRiskAction').value = '';
+
             renderRisksTable();
         }
 
@@ -1807,13 +2281,25 @@
             const canEdit = currentUser.permissions.canEdit;
             const canDelete = currentUser.permissions.canDelete;
             tbody.innerHTML = '';
+
+            // Update count
+            document.getElementById('risksCount').textContent = dashboardData.risks.length;
+
+            // Show/hide no items message
+            document.getElementById('noRisksMsg').style.display = dashboardData.risks.length === 0 ? 'block' : 'none';
+            document.getElementById('risksTable').style.display = dashboardData.risks.length === 0 ? 'none' : 'table';
+
+            // Populate client dropdown in form
+            document.getElementById('newRiskClient').innerHTML = getClientOptions('');
             
             dashboardData.risks.forEach((row, index) => {
                 const tr = document.createElement('tr');
+                const dateStr = row.dateAdded ? formatDateShort(new Date(row.dateAdded)) : '-';
                 tr.innerHTML = `
-                    <td><input type="text" value="${row.client}" onchange="dashboardData.risks[${index}].client = this.value" ${!canEdit ? 'disabled' : ''}></td>
-                    <td><input type="text" value="${row.campaign || ''}" onchange="dashboardData.risks[${index}].campaign = this.value" ${!canEdit ? 'disabled' : ''}></td>
-                    <td><input type="text" value="${row.risk}" onchange="dashboardData.risks[${index}].risk = this.value" ${!canEdit ? 'disabled' : ''}></td>
+                    <td class="date-cell">${dateStr}</td>
+                    <td>${row.client || '-'}</td>
+                    <td>${row.campaign || '-'}</td>
+                    <td>${row.risk || '-'}</td>
                     <td>
                         <select onchange="dashboardData.risks[${index}].timeHorizon = this.value" ${!canEdit ? 'disabled' : ''}>
                             <option ${row.timeHorizon === '0-30 days' ? 'selected' : ''}>0-30 days</option>
@@ -1829,7 +2315,12 @@
                             <option ${row.likelihood === 'Low' ? 'selected' : ''}>Low</option>
                         </select>
                     </td>
-                    <td><input type="text" value="${row.action}" onchange="dashboardData.risks[${index}].action = this.value" ${!canEdit ? 'disabled' : ''}></td>
+                    <td><input type="text" value="${row.action || ''}" onchange="dashboardData.risks[${index}].action = this.value" ${!canEdit ? 'disabled' : ''}></td>
+                    <td style="${!canDelete ? 'display:none' : ''}"><button class="btn btn-danger" onclick="deleteRiskRow(${index})">Delete</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
                     <td style="${!canDelete ? 'display:none' : ''}"><button class="btn btn-danger" onclick="deleteRiskRow(${index})" ${!canDelete ? 'disabled' : ''}>Delete</button></td>
                 `;
                 tbody.appendChild(tr);
@@ -1840,14 +2331,40 @@
         function addRelationshipRow() {
             if (!currentUser.permissions.canEdit) return;
 
+            const client = document.getElementById('newRelationshipClient').value;
+            const campaign = document.getElementById('newRelationshipCampaign').value;
+            const stakeholder = document.getElementById('newRelationshipStakeholder').value.trim();
+            const sentiment = document.getElementById('newRelationshipSentiment').value;
+            const change = document.getElementById('newRelationshipChange').value;
+            const action = document.getElementById('newRelationshipAction').value.trim();
+
+            if (!client) {
+                alert('Please select a client');
+                return;
+            }
+            if (!stakeholder) {
+                alert('Please enter a stakeholder name');
+                return;
+            }
+
             dashboardData.relationships.push({
-                client: '',
-                campaign: '',
-                stakeholder: '',
-                sentiment: 'Neutral',
-                change: '→',
-                action: ''
+                dateAdded: new Date().toISOString(),
+                client: client,
+                campaign: campaign,
+                stakeholder: stakeholder,
+                sentiment: sentiment,
+                change: change,
+                action: action
             });
+
+            // Clear form
+            document.getElementById('newRelationshipClient').value = '';
+            document.getElementById('newRelationshipCampaign').innerHTML = '<option value="">Select Campaign...</option>';
+            document.getElementById('newRelationshipStakeholder').value = '';
+            document.getElementById('newRelationshipSentiment').value = 'Neutral';
+            document.getElementById('newRelationshipChange').value = '→';
+            document.getElementById('newRelationshipAction').value = '';
+
             renderRelationshipsTable();
         }
 
@@ -1865,13 +2382,25 @@
             const canEdit = currentUser.permissions.canEdit;
             const canDelete = currentUser.permissions.canDelete;
             tbody.innerHTML = '';
+
+            // Update count
+            document.getElementById('relationshipsCount').textContent = dashboardData.relationships.length;
+
+            // Show/hide no items message
+            document.getElementById('noRelationshipsMsg').style.display = dashboardData.relationships.length === 0 ? 'block' : 'none';
+            document.getElementById('relationshipsTable').style.display = dashboardData.relationships.length === 0 ? 'none' : 'table';
+
+            // Populate client dropdown in form
+            document.getElementById('newRelationshipClient').innerHTML = getClientOptions('');
             
             dashboardData.relationships.forEach((row, index) => {
                 const tr = document.createElement('tr');
+                const dateStr = row.dateAdded ? formatDateShort(new Date(row.dateAdded)) : '-';
                 tr.innerHTML = `
-                    <td><input type="text" value="${row.client}" onchange="dashboardData.relationships[${index}].client = this.value" ${!canEdit ? 'disabled' : ''}></td>
-                    <td><input type="text" value="${row.campaign || ''}" onchange="dashboardData.relationships[${index}].campaign = this.value" ${!canEdit ? 'disabled' : ''}></td>
-                    <td><input type="text" value="${row.stakeholder}" onchange="dashboardData.relationships[${index}].stakeholder = this.value" ${!canEdit ? 'disabled' : ''}></td>
+                    <td class="date-cell">${dateStr}</td>
+                    <td>${row.client || '-'}</td>
+                    <td>${row.campaign || '-'}</td>
+                    <td>${row.stakeholder || '-'}</td>
                     <td>
                         <select onchange="dashboardData.relationships[${index}].sentiment = this.value" ${!canEdit ? 'disabled' : ''}>
                             <option ${row.sentiment === 'Positive' ? 'selected' : ''}>Positive</option>
@@ -1886,8 +2415,8 @@
                             <option ${row.change === '↓' ? 'selected' : ''}>↓ Deteriorating</option>
                         </select>
                     </td>
-                    <td><input type="text" value="${row.action}" onchange="dashboardData.relationships[${index}].action = this.value" ${!canEdit ? 'disabled' : ''}></td>
-                    <td style="${!canDelete ? 'display:none' : ''}"><button class="btn btn-danger" onclick="deleteRelationshipRow(${index})" ${!canDelete ? 'disabled' : ''}>Delete</button></td>
+                    <td><input type="text" value="${row.action || ''}" onchange="dashboardData.relationships[${index}].action = this.value" ${!canEdit ? 'disabled' : ''}></td>
+                    <td style="${!canDelete ? 'display:none' : ''}"><button class="btn btn-danger" onclick="deleteRelationshipRow(${index})">Delete</button></td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -1897,13 +2426,37 @@
         function addGrowthRow() {
             if (!currentUser.permissions.canEdit) return;
 
+            const client = document.getElementById('newGrowthClient').value;
+            const campaign = document.getElementById('newGrowthCampaign').value;
+            const opportunity = document.getElementById('newGrowthOpportunity').value.trim();
+            const movement = document.getElementById('newGrowthMovement').value.trim();
+            const blocker = document.getElementById('newGrowthBlocker').value.trim();
+
+            if (!client) {
+                alert('Please select a client');
+                return;
+            }
+            if (!opportunity) {
+                alert('Please enter an opportunity description');
+                return;
+            }
+
             dashboardData.growth.push({
-                client: '',
-                campaign: '',
-                opportunity: '',
-                movement: '',
-                blocker: ''
+                dateAdded: new Date().toISOString(),
+                client: client,
+                campaign: campaign,
+                opportunity: opportunity,
+                movement: movement,
+                blocker: blocker
             });
+
+            // Clear form
+            document.getElementById('newGrowthClient').value = '';
+            document.getElementById('newGrowthCampaign').innerHTML = '<option value="">Select Campaign...</option>';
+            document.getElementById('newGrowthOpportunity').value = '';
+            document.getElementById('newGrowthMovement').value = '';
+            document.getElementById('newGrowthBlocker').value = '';
+
             renderGrowthTable();
         }
 
@@ -1921,16 +2474,28 @@
             const canEdit = currentUser.permissions.canEdit;
             const canDelete = currentUser.permissions.canDelete;
             tbody.innerHTML = '';
+
+            // Update count
+            document.getElementById('growthCount').textContent = dashboardData.growth.length;
+
+            // Show/hide no items message
+            document.getElementById('noGrowthMsg').style.display = dashboardData.growth.length === 0 ? 'block' : 'none';
+            document.getElementById('growthTable').style.display = dashboardData.growth.length === 0 ? 'none' : 'table';
+
+            // Populate client dropdown in form
+            document.getElementById('newGrowthClient').innerHTML = getClientOptions('');
             
             dashboardData.growth.forEach((row, index) => {
                 const tr = document.createElement('tr');
+                const dateStr = row.dateAdded ? formatDateShort(new Date(row.dateAdded)) : '-';
                 tr.innerHTML = `
-                    <td><input type="text" value="${row.client}" onchange="dashboardData.growth[${index}].client = this.value" ${!canEdit ? 'disabled' : ''}></td>
-                    <td><input type="text" value="${row.campaign || ''}" onchange="dashboardData.growth[${index}].campaign = this.value" ${!canEdit ? 'disabled' : ''}></td>
-                    <td><input type="text" value="${row.opportunity}" onchange="dashboardData.growth[${index}].opportunity = this.value" ${!canEdit ? 'disabled' : ''}></td>
-                    <td><input type="text" value="${row.movement}" onchange="dashboardData.growth[${index}].movement = this.value" ${!canEdit ? 'disabled' : ''}></td>
-                    <td><input type="text" value="${row.blocker}" onchange="dashboardData.growth[${index}].blocker = this.value" ${!canEdit ? 'disabled' : ''}></td>
-                    <td style="${!canDelete ? 'display:none' : ''}"><button class="btn btn-danger" onclick="deleteGrowthRow(${index})" ${!canDelete ? 'disabled' : ''}>Delete</button></td>
+                    <td class="date-cell">${dateStr}</td>
+                    <td>${row.client || '-'}</td>
+                    <td>${row.campaign || '-'}</td>
+                    <td>${row.opportunity || '-'}</td>
+                    <td><input type="text" value="${row.movement || ''}" onchange="dashboardData.growth[${index}].movement = this.value" ${!canEdit ? 'disabled' : ''}></td>
+                    <td><input type="text" value="${row.blocker || ''}" onchange="dashboardData.growth[${index}].blocker = this.value" ${!canEdit ? 'disabled' : ''}></td>
+                    <td style="${!canDelete ? 'display:none' : ''}"><button class="btn btn-danger" onclick="deleteGrowthRow(${index})">Delete</button></td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -2090,7 +2655,7 @@
                                 <thead>
                                     <tr>
                                         <th>Week</th>
-                                        <th style="text-align: center;">Commercial</th>
+                                        <th style="text-align: center;">Financial</th>
                                         <th style="text-align: center;">Ops</th>
                                         <th style="text-align: center;">Relationship</th>
                                         <th style="text-align: center;">Growth</th>
@@ -2104,7 +2669,7 @@
                         html += `
                             <tr>
                                 <td><strong>${formatDate(entry.week)}</strong></td>
-                                <td class="traffic-light-cell">${createStaticTrafficLight(entry.commercial)}</td>
+                                <td class="traffic-light-cell">${createStaticTrafficLight(entry.financial)}</td>
                                 <td class="traffic-light-cell">${createStaticTrafficLight(entry.ops)}</td>
                                 <td class="traffic-light-cell">${createStaticTrafficLight(entry.relationship)}</td>
                                 <td class="traffic-light-cell">${createStaticTrafficLight(entry.growth)}</td>
@@ -2152,7 +2717,7 @@
                             <thead>
                                 <tr>
                                     <th>Week</th>
-                                    <th style="text-align: center;">Commercial</th>
+                                    <th style="text-align: center;">Financial</th>
                                     <th style="text-align: center;">Ops</th>
                                     <th style="text-align: center;">Relationship</th>
                                     <th style="text-align: center;">Growth</th>
@@ -2169,7 +2734,7 @@
                             html += `
                                 <tr>
                                     <td><strong>${formatDate(week.weekDate)}</strong></td>
-                                    <td class="traffic-light-cell">${createStaticTrafficLight(entry.commercial)}</td>
+                                    <td class="traffic-light-cell">${createStaticTrafficLight(entry.financial)}</td>
                                     <td class="traffic-light-cell">${createStaticTrafficLight(entry.ops)}</td>
                                     <td class="traffic-light-cell">${createStaticTrafficLight(entry.relationship)}</td>
                                     <td class="traffic-light-cell">${createStaticTrafficLight(entry.growth)}</td>
@@ -2202,7 +2767,7 @@
                                 <tr>
                                     <th>Client</th>
                                     <th>Campaign</th>
-                                    <th style="text-align: center;">Commercial</th>
+                                    <th style="text-align: center;">Financial</th>
                                     <th style="text-align: center;">Ops</th>
                                     <th style="text-align: center;">Relationship</th>
                                     <th style="text-align: center;">Growth</th>
@@ -2218,7 +2783,7 @@
                             <tr>
                                 <td><strong>${entry.client}</strong></td>
                                 <td>${entry.campaign || '-'}</td>
-                                <td class="traffic-light-cell">${createStaticTrafficLight(entry.commercial)}</td>
+                                <td class="traffic-light-cell">${createStaticTrafficLight(entry.financial)}</td>
                                 <td class="traffic-light-cell">${createStaticTrafficLight(entry.ops)}</td>
                                 <td class="traffic-light-cell">${createStaticTrafficLight(entry.relationship)}</td>
                                 <td class="traffic-light-cell">${createStaticTrafficLight(entry.growth)}</td>
@@ -2266,6 +2831,15 @@
                 const tr = document.createElement('tr');
                 const isCurrentUser = user.email === currentUser.email;
                 
+                // Parse dashboard access
+                const access = user.dashboardAccess || 'local';
+                const hasLocal = access.includes('local');
+                const hasInternational = access.includes('international');
+                
+                const accessBadges = [];
+                if (hasLocal) accessBadges.push('<span style="background: #28a745; color: white; padding: 2px 8px; border-radius: 10px; font-size: 11px; margin-right: 4px;">🇿🇦 Local</span>');
+                if (hasInternational) accessBadges.push('<span style="background: #007bff; color: white; padding: 2px 8px; border-radius: 10px; font-size: 11px;">🌍 Intl</span>');
+                
                 tr.innerHTML = `
                     <td>${user.email}</td>
                     <td>
@@ -2276,18 +2850,23 @@
                         </select>
                     </td>
                     <td>
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            ${accessBadges.join('')}
+                            <button class="btn btn-secondary" onclick="editDashboardAccess('${user.email}', '${access}')" style="padding: 2px 6px; font-size: 10px; margin-left: 5px;" ${isCurrentUser ? 'disabled' : ''}>✏️</button>
+                        </div>
+                    </td>
+                    <td>
                         <select onchange="updateUserStatus('${user.email}', this.value)" ${isCurrentUser ? 'disabled' : ''}>
                             <option value="Active" ${user.status === 'Active' ? 'selected' : ''}>Active</option>
                             <option value="Inactive" ${user.status === 'Inactive' ? 'selected' : ''}>Inactive</option>
                         </select>
                     </td>
-                    <td>${formatDate(user.addedDate)}</td>
                     <td>
                         <button class="btn btn-danger" onclick="removeUser('${user.email}')" ${isCurrentUser ? 'disabled' : ''}>
                             Remove
                         </button>
                         <button class="btn btn-secondary" onclick="resetPassword('${user.email}')" ${isCurrentUser ? 'disabled' : ''} style="margin-left: 5px;">
-                            Reset Password
+                            Reset PW
                         </button>
                     </td>
                 `;
@@ -2295,10 +2874,53 @@
             });
         }
 
+        async function editDashboardAccess(email, currentAccess) {
+            const hasLocal = currentAccess.includes('local');
+            const hasInternational = currentAccess.includes('international');
+            
+            const newLocal = confirm(`${email}\n\nCurrently has Local access: ${hasLocal ? 'YES' : 'NO'}\n\nGrant LOCAL dashboard access?`);
+            const newInternational = confirm(`${email}\n\nCurrently has International access: ${hasInternational ? 'YES' : 'NO'}\n\nGrant INTERNATIONAL dashboard access?`);
+            
+            if (!newLocal && !newInternational) {
+                alert('User must have at least one dashboard access');
+                return;
+            }
+            
+            let newAccess = [];
+            if (newLocal) newAccess.push('local');
+            if (newInternational) newAccess.push('international');
+            
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'updateUserAccess',
+                        userEmail: currentUser.email,
+                        targetEmail: email,
+                        dashboardAccess: newAccess.join(',')
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('✅ Dashboard access updated!');
+                    loadUsers();
+                } else {
+                    alert('❌ Error: ' + (result.error || 'Failed to update access'));
+                }
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        }
+
         async function addNewUser() {
             const email = document.getElementById('newUserEmail').value.trim();
             const role = document.getElementById('newUserRole').value;
             const password = document.getElementById('newUserPassword').value.trim();
+            const localAccess = document.getElementById('newUserLocalAccess').checked;
+            const internationalAccess = document.getElementById('newUserInternationalAccess').checked;
 
             if (!email) {
                 alert('Please enter an email address');
@@ -2310,6 +2932,16 @@
                 return;
             }
 
+            if (!localAccess && !internationalAccess) {
+                alert('Please select at least one dashboard access');
+                return;
+            }
+
+            // Build dashboard access string
+            let dashboardAccess = [];
+            if (localAccess) dashboardAccess.push('local');
+            if (internationalAccess) dashboardAccess.push('international');
+
             try {
                 const response = await fetch(SCRIPT_URL, {
                     method: 'POST',
@@ -2319,7 +2951,8 @@
                         userEmail: currentUser.email,
                         newUserEmail: email,
                         newUserRole: role,
-                        newUserPassword: password
+                        newUserPassword: password,
+                        dashboardAccess: dashboardAccess.join(',')
                     })
                 });
 
@@ -2329,6 +2962,8 @@
                     alert(`✅ User added successfully!\n\nSend them:\nEmail: ${email}\nTemporary password: ${password}`);
                     document.getElementById('newUserEmail').value = '';
                     document.getElementById('newUserPassword').value = '';
+                    document.getElementById('newUserLocalAccess').checked = true;
+                    document.getElementById('newUserInternationalAccess').checked = false;
                     loadUsers();
                 } else {
                     alert('❌ Error: ' + (result.error || 'Failed to add user'));
@@ -2456,7 +3091,7 @@
         
         async function loadConfiguration() {
             try {
-                const url = `${SCRIPT_URL}?action=getConfiguration&userEmail=${encodeURIComponent(currentUser.email)}`;
+                const url = `${SCRIPT_URL}?action=getConfiguration&userEmail=${encodeURIComponent(currentUser.email)}&dashboardType=${encodeURIComponent(selectedDashboardType)}`;
                 const response = await fetch(url);
                 clientCampaignConfig = await response.json();
                 
@@ -2536,7 +3171,7 @@
             }
             
             try {
-                const url = `${SCRIPT_URL}?action=addClient&userEmail=${encodeURIComponent(currentUser.email)}&clientName=${encodeURIComponent(clientName)}`;
+                const url = `${SCRIPT_URL}?action=addClient&userEmail=${encodeURIComponent(currentUser.email)}&clientName=${encodeURIComponent(clientName)}&dashboardType=${encodeURIComponent(selectedDashboardType)}`;
                 const response = await fetch(url);
                 const result = await response.json();
                 

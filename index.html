@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weekly Multi-Client Account Control Dashboard</title>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         * {
             margin: 0;
@@ -47,6 +46,49 @@
         .login-box p {
             color: #6c757d;
             margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            background: #218838;
+        }
+
+        .login-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
         }
 
         #google-signin-button {
@@ -497,13 +539,24 @@
         <div class="login-box">
             <h1>📊 Dashboard Login</h1>
             <p>Weekly Multi-Client Account Control</p>
-            <p style="font-size: 14px;">Sign in with your authorized Google account</p>
             
-            <div id="google-signin-button"></div>
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="loginEmail" required placeholder="your-email@example.com">
+                </div>
+                
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" required placeholder="Enter your password">
+                </div>
+                
+                <button type="submit" class="login-btn" id="loginBtn">Login</button>
+            </form>
             
             <div id="loginError" class="error-message"></div>
             
-            <div id="loginLoading" class="loading" style="display: none;">
+            <div id="loginLoading" class="loading">
                 <div class="loading-spinner"></div>
                 <p>Authenticating...</p>
             </div>
@@ -895,6 +948,10 @@
                             <option value="Admin">Admin (Full access)</option>
                         </select>
                     </div>
+                    <div class="form-group">
+                        <label>Temporary Password</label>
+                        <input type="text" id="newUserPassword" placeholder="Create a temporary password">
+                    </div>
                     <button class="btn btn-success" onclick="addNewUser()">+ Add User</button>
                 </div>
 
@@ -918,8 +975,7 @@
 
     <script>
         // ===== CONFIGURATION =====
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzoUoggQsStkOwEWjwE_juAl4K1eK55KQBk2NVqNokk5KQpFwvT8_WY00omNK1YZuoa/exec'; // Replace with your deployed script URL
-        const GOOGLE_CLIENT_ID = '446525797021-dmha068o4nhuhqu4lr4j0fmr2picccg4.apps.googleusercontent.com'; // Optional: for Google Sign-In button styling
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxPJd7YSURLIpVxHXzWydAKN9PnDV1gqqpOD-njtv71NEu07VWxQmf-lsLrjVi8kPDr/exec'; // Replace with your deployed script URL
 
         // ===== GLOBAL STATE =====
         let currentUser = null;
@@ -938,61 +994,36 @@
 
         // ===== INITIALIZATION =====
         window.onload = function() {
-            initGoogleSignIn();
+            // Nothing to initialize for password login
         };
 
-        function initGoogleSignIn() {
-            google.accounts.id.initialize({
-                client_id: GOOGLE_CLIENT_ID,
-                callback: handleCredentialResponse
-            });
-
-            google.accounts.id.renderButton(
-                document.getElementById('google-signin-button'),
-                { 
-                    theme: 'outline', 
-                    size: 'large',
-                    text: 'signin_with',
-                    width: 250
-                }
-            );
-
-            // Also enable one-tap sign-in
-            google.accounts.id.prompt();
-        }
-
-        async function handleCredentialResponse(response) {
-            showLoading('loginLoading');
-            hideError();
-
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            document.getElementById('loginBtn').disabled = true;
+            document.getElementById('loginLoading').style.display = 'block';
+            document.getElementById('loginError').style.display = 'none';
+            
             try {
-                // Decode the JWT token to get user email
-                const payload = JSON.parse(atob(response.credential.split('.')[1]));
-                const userEmail = payload.email;
-
-                // Authenticate with backend
-                const authResult = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        action: 'authenticate',
-                        email: userEmail
-                    })
-                });
-
-                const authData = await authResult.json();
-
+                const url = `${SCRIPT_URL}?action=authenticate&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
+                const response = await fetch(url);
+                const authData = await response.json();
+                
                 if (authData.success) {
                     currentUser = authData;
                     await loginSuccess();
                 } else {
-                    showError(authData.message || 'You are not authorized to access this dashboard.');
+                    showError(authData.message || 'Invalid email or password');
                 }
             } catch (error) {
-                showError('Authentication failed. Please try again.');
-                console.error('Auth error:', error);
+                showError('Login failed. Please check your connection and try again.');
+                console.error('Login error:', error);
             } finally {
-                hideLoading('loginLoading');
+                document.getElementById('loginBtn').disabled = false;
+                document.getElementById('loginLoading').style.display = 'none';
             }
         }
 
@@ -1061,10 +1092,11 @@
         }
 
         function logout() {
-            google.accounts.id.disableAutoSelect();
             currentUser = null;
             document.getElementById('dashboardPage').style.display = 'none';
             document.getElementById('loginPage').style.display = 'flex';
+            document.getElementById('loginEmail').value = '';
+            document.getElementById('loginPassword').value = '';
         }
 
         function showError(message) {
@@ -1127,18 +1159,11 @@
 
         async function loadDashboardData() {
             try {
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        action: 'loadData',
-                        userEmail: currentUser.email
-                    })
-                });
-
+                const url = `${SCRIPT_URL}?action=loadData&userEmail=${encodeURIComponent(currentUser.email)}`;
+                const response = await fetch(url);
                 const data = await response.json();
 
-                if (data) {
+                if (data && !data.error) {
                     dashboardData = data;
                     document.getElementById('weekDate').value = data.weekDate || '';
                     document.getElementById('escalations').value = data.escalations || '';
@@ -1150,18 +1175,15 @@
 
         async function loadArchiveData() {
             try {
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        action: 'loadArchive',
-                        userEmail: currentUser.email
-                    })
-                });
-
+                const url = `${SCRIPT_URL}?action=loadArchive&userEmail=${encodeURIComponent(currentUser.email)}`;
+                const response = await fetch(url);
                 weeklyArchive = await response.json();
+                if (!Array.isArray(weeklyArchive)) {
+                    weeklyArchive = [];
+                }
             } catch (error) {
                 console.error('Error loading archive:', error);
+                weeklyArchive = [];
             }
         }
 
@@ -1880,17 +1902,13 @@
         // ===== ADMIN FUNCTIONS =====
         async function loadUsers() {
             try {
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        action: 'getUsers',
-                        userEmail: currentUser.email
-                    })
-                });
-
+                const url = `${SCRIPT_URL}?action=getUsers&userEmail=${encodeURIComponent(currentUser.email)}`;
+                const response = await fetch(url);
                 const users = await response.json();
-                renderUsersTable(users);
+                
+                if (!users.error) {
+                    renderUsersTable(users);
+                }
             } catch (error) {
                 console.error('Error loading users:', error);
             }
@@ -1924,6 +1942,9 @@
                         <button class="btn btn-danger" onclick="removeUser('${user.email}')" ${isCurrentUser ? 'disabled' : ''}>
                             Remove
                         </button>
+                        <button class="btn btn-secondary" onclick="resetPassword('${user.email}')" ${isCurrentUser ? 'disabled' : ''} style="margin-left: 5px;">
+                            Reset Password
+                        </button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -1933,9 +1954,15 @@
         async function addNewUser() {
             const email = document.getElementById('newUserEmail').value.trim();
             const role = document.getElementById('newUserRole').value;
+            const password = document.getElementById('newUserPassword').value.trim();
 
             if (!email) {
                 alert('Please enter an email address');
+                return;
+            }
+
+            if (!password) {
+                alert('Please enter a temporary password');
                 return;
             }
 
@@ -1947,15 +1974,17 @@
                         action: 'addUser',
                         userEmail: currentUser.email,
                         newUserEmail: email,
-                        newUserRole: role
+                        newUserRole: role,
+                        newUserPassword: password
                     })
                 });
 
                 const result = await response.json();
 
                 if (result.success) {
-                    alert('✅ User added successfully!');
+                    alert(`✅ User added successfully!\n\nSend them:\nEmail: ${email}\nTemporary password: ${password}`);
                     document.getElementById('newUserEmail').value = '';
+                    document.getElementById('newUserPassword').value = '';
                     loadUsers();
                 } else {
                     alert('❌ Error: ' + (result.error || 'Failed to add user'));
@@ -2042,6 +2071,37 @@
                     loadUsers();
                 } else {
                     alert('❌ Error: ' + (result.error || 'Failed to remove user'));
+                }
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        }
+
+        async function resetPassword(targetEmail) {
+            const newPassword = prompt(`Enter new password for ${targetEmail}:`);
+            
+            if (!newPassword) {
+                return;
+            }
+
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'changePassword',
+                        userEmail: currentUser.email,
+                        targetEmail: targetEmail,
+                        newPassword: newPassword
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert(`✅ Password changed!\n\nSend them:\nEmail: ${targetEmail}\nNew password: ${newPassword}`);
+                } else {
+                    alert('❌ Error: ' + (result.error || 'Failed to change password'));
                 }
             } catch (error) {
                 alert('❌ Error: ' + error.message);

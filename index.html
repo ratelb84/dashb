@@ -929,11 +929,47 @@
             <div class="section" id="admin">
                 <div class="section-header">
                     <div class="section-title">
-                        <h2>⚙️ Admin Panel - User Management</h2>
-                        <div class="section-purpose">Manage user access and permissions</div>
+                        <h2>⚙️ Admin Panel</h2>
+                        <div class="section-purpose">Manage users, clients, and campaigns</div>
                     </div>
                 </div>
 
+                <!-- Client & Campaign Configuration -->
+                <div style="background: #e7f5ff; padding: 20px; border-radius: 8px; margin-bottom: 30px; border-left: 4px solid #007bff;">
+                    <h3 style="margin-bottom: 15px;">📋 Client & Campaign Configuration</h3>
+                    <p style="color: #495057; margin-bottom: 20px; font-size: 14px;">Configure clients and campaigns here. They will appear as dropdown options throughout the dashboard.</p>
+                    
+                    <!-- Add Client -->
+                    <div style="background: white; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+                        <h4 style="margin-bottom: 10px; font-size: 16px;">Add New Client</h4>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="newClientName" placeholder="Client name" style="flex: 1;">
+                            <button class="btn btn-success" onclick="addClientConfig()">+ Add Client</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Add Campaign -->
+                    <div style="background: white; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+                        <h4 style="margin-bottom: 10px; font-size: 16px;">Add Campaign to Client</h4>
+                        <div style="display: flex; gap: 10px;">
+                            <select id="campaignClientSelect" style="flex: 1;">
+                                <option value="">Select client first...</option>
+                            </select>
+                            <input type="text" id="newCampaignName" placeholder="Campaign name" style="flex: 1;">
+                            <button class="btn btn-success" onclick="addCampaignConfig()">+ Add Campaign</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Current Configuration -->
+                    <div style="background: white; padding: 15px; border-radius: 6px;">
+                        <h4 style="margin-bottom: 10px; font-size: 16px;">Current Configuration</h4>
+                        <div id="configurationDisplay"></div>
+                    </div>
+                </div>
+
+                <!-- User Management -->
+                <h3 style="margin-bottom: 10px;">👥 User Management</h3>
+                
                 <div class="add-user-form">
                     <h3>Add New User</h3>
                     <div class="form-group">
@@ -991,6 +1027,7 @@
             escalations: ''
         };
         let weeklyArchive = [];
+        let clientCampaignConfig = {}; // Stores client-campaign configuration
 
         // ===== INITIALIZATION =====
         window.onload = function() {
@@ -1072,6 +1109,7 @@
             applyPermissions();
 
             // Load data
+            await loadConfiguration();
             await loadDashboardData();
             await loadArchiveData();
 
@@ -2142,6 +2180,238 @@
             } catch (error) {
                 alert('❌ Error: ' + error.message);
             }
+        }
+
+        // ===== CONFIGURATION MANAGEMENT =====
+        
+        async function loadConfiguration() {
+            try {
+                const url = `${SCRIPT_URL}?action=getConfiguration&userEmail=${encodeURIComponent(currentUser.email)}`;
+                const response = await fetch(url);
+                clientCampaignConfig = await response.json();
+                
+                if (!clientCampaignConfig.error) {
+                    renderConfigurationDisplay();
+                    updateCampaignClientSelect();
+                }
+            } catch (error) {
+                console.error('Error loading configuration:', error);
+                clientCampaignConfig = {};
+            }
+        }
+
+        function renderConfigurationDisplay() {
+            const container = document.getElementById('configurationDisplay');
+            if (!container) return;
+            
+            const clients = Object.keys(clientCampaignConfig).sort();
+            
+            if (clients.length === 0) {
+                container.innerHTML = '<p style="color: #6c757d; padding: 10px;">No clients configured yet. Add your first client above.</p>';
+                return;
+            }
+            
+            let html = '<div style="max-height: 400px; overflow-y: auto;">';
+            
+            clients.forEach(client => {
+                const campaigns = clientCampaignConfig[client] || [];
+                html += `
+                    <div style="border: 1px solid #dee2e6; border-radius: 6px; padding: 15px; margin-bottom: 10px; background: #f8f9fa;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <strong style="font-size: 16px; color: #495057;">${client}</strong>
+                            <button class="btn btn-danger" style="padding: 4px 8px; font-size: 12px;" onclick="deleteClientConfig('${client}')">Delete Client</button>
+                        </div>
+                `;
+                
+                if (campaigns.length > 0) {
+                    html += '<div style="margin-left: 20px;">';
+                    campaigns.forEach(campaign => {
+                        html += `
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #e9ecef;">
+                                <span style="color: #6c757d;">├─ ${campaign}</span>
+                                <button class="btn btn-danger" style="padding: 2px 6px; font-size: 11px;" onclick="deleteCampaignConfig('${client}', '${campaign}')">Delete</button>
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                } else {
+                    html += '<p style="margin-left: 20px; color: #999; font-size: 13px; font-style: italic;">No campaigns yet</p>';
+                }
+                
+                html += '</div>';
+            });
+            
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function updateCampaignClientSelect() {
+            const select = document.getElementById('campaignClientSelect');
+            if (!select) return;
+            
+            const clients = Object.keys(clientCampaignConfig).sort();
+            
+            select.innerHTML = '<option value="">Select client...</option>';
+            clients.forEach(client => {
+                select.innerHTML += `<option value="${client}">${client}</option>`;
+            });
+        }
+
+        async function addClientConfig() {
+            const clientName = document.getElementById('newClientName').value.trim();
+            
+            if (!clientName) {
+                alert('Please enter a client name');
+                return;
+            }
+            
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'addClient',
+                        userEmail: currentUser.email,
+                        clientName: clientName
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('✅ Client added successfully!');
+                    document.getElementById('newClientName').value = '';
+                    await loadConfiguration();
+                } else {
+                    alert('❌ Error: ' + (result.error || 'Failed to add client'));
+                }
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        }
+
+        async function deleteClientConfig(clientName) {
+            if (!confirm(`Delete client "${clientName}" and all its campaigns?\n\nThis will not affect existing dashboard data.`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'deleteClient',
+                        userEmail: currentUser.email,
+                        clientName: clientName
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('✅ Client deleted!');
+                    await loadConfiguration();
+                } else {
+                    alert('❌ Error: ' + (result.error || 'Failed to delete client'));
+                }
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        }
+
+        async function addCampaignConfig() {
+            const clientName = document.getElementById('campaignClientSelect').value;
+            const campaignName = document.getElementById('newCampaignName').value.trim();
+            
+            if (!clientName) {
+                alert('Please select a client');
+                return;
+            }
+            
+            if (!campaignName) {
+                alert('Please enter a campaign name');
+                return;
+            }
+            
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'addCampaign',
+                        userEmail: currentUser.email,
+                        clientName: clientName,
+                        campaignName: campaignName
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('✅ Campaign added successfully!');
+                    document.getElementById('newCampaignName').value = '';
+                    await loadConfiguration();
+                } else {
+                    alert('❌ Error: ' + (result.error || 'Failed to add campaign'));
+                }
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        }
+
+        async function deleteCampaignConfig(clientName, campaignName) {
+            if (!confirm(`Delete campaign "${campaignName}" from ${clientName}?\n\nThis will not affect existing dashboard data.`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'deleteCampaign',
+                        userEmail: currentUser.email,
+                        clientName: clientName,
+                        campaignName: campaignName
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('✅ Campaign deleted!');
+                    await loadConfiguration();
+                } else {
+                    alert('❌ Error: ' + (result.error || 'Failed to delete campaign'));
+                }
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        }
+
+        // Helper function to create client/campaign dropdowns
+        function createClientDropdown(currentValue, onchangeHandler) {
+            const clients = Object.keys(clientCampaignConfig).sort();
+            let html = `<select onchange="${onchangeHandler}" ${!currentUser.permissions.canEdit ? 'disabled' : ''}>`;
+            html += '<option value="">Select client...</option>';
+            clients.forEach(client => {
+                const selected = client === currentValue ? 'selected' : '';
+                html += `<option value="${client}" ${selected}>${client}</option>`;
+            });
+            html += '</select>';
+            return html;
+        }
+
+        function createCampaignDropdown(clientName, currentValue, onchangeHandler) {
+            const campaigns = clientCampaignConfig[clientName] || [];
+            let html = `<select onchange="${onchangeHandler}" ${!currentUser.permissions.canEdit ? 'disabled' : ''}>`;
+            html += '<option value="">Select campaign...</option>';
+            campaigns.forEach(campaign => {
+                const selected = campaign === currentValue ? 'selected' : '';
+                html += `<option value="${campaign}" ${selected}>${campaign}</option>`;
+            });
+            html += '</select>';
+            return html;
         }
     </script>
 </body>

@@ -1,0 +1,2052 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weekly Multi-Client Account Control Dashboard</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f5f7fa;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        /* Login Page Styles */
+        .login-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .login-box h1 {
+            color: #1a1a1a;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .login-box p {
+            color: #6c757d;
+            margin-bottom: 30px;
+        }
+
+        #google-signin-button {
+            margin: 20px auto;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        /* Dashboard Styles */
+        .dashboard-container {
+            display: none;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .nav-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .nav-btn {
+            padding: 20px;
+            background: white;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .nav-btn:hover {
+            border-color: #28a745;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .nav-btn.active {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+
+        .nav-btn-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .nav-btn-desc {
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        .nav-btn.active .nav-btn-desc {
+            color: #e3f2fd;
+        }
+
+        .section {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left h1 {
+            color: #1a1a1a;
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .header-right {
+            text-align: right;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .user-email {
+            color: #495057;
+            font-size: 14px;
+        }
+
+        .user-role {
+            background: #28a745;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .week-selector {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .week-selector input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        h1 {
+            color: #1a1a1a;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .section-title {
+            flex: 1;
+        }
+
+        h2 {
+            color: #2c3e50;
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+
+        h3 {
+            color: #495057;
+            font-size: 18px;
+            margin: 20px 0 10px 0;
+        }
+
+        .section-purpose {
+            color: #6c757d;
+            font-size: 14px;
+            font-style: italic;
+            margin-top: 5px;
+        }
+
+        .section-question {
+            background: #f8f9fa;
+            padding: 12px 15px;
+            border-left: 4px solid #28a745;
+            margin-top: 15px;
+            border-radius: 4px;
+            font-weight: 500;
+            color: #495057;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th {
+            background: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #495057;
+            border-bottom: 2px solid #dee2e6;
+            font-size: 14px;
+        }
+
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        input[type="text"], input[type="email"], select, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        input[type="text"]:disabled, 
+        input[type="email"]:disabled, 
+        select:disabled, 
+        textarea:disabled {
+            background: #e9ecef;
+            cursor: not-allowed;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 40px;
+        }
+
+        select {
+            cursor: pointer;
+            background: white;
+        }
+
+        .status-indicator {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: inline-block;
+            cursor: pointer;
+            border: 2px solid #ddd;
+        }
+
+        .status-green { background: #28a745; border-color: #28a745; }
+        .status-amber { background: #ffc107; border-color: #ffc107; }
+        .status-red { background: #dc3545; border-color: #dc3545; }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #218838;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover:not(:disabled) {
+            background: #218838;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            background: #c82333;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            margin-left: 10px;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #5a6268;
+        }
+
+        .btn-logout {
+            background: #dc3545;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .traffic-light-cell {
+            text-align: center;
+        }
+
+        .rules {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        .rules strong {
+            display: block;
+            margin-bottom: 5px;
+            color: #856404;
+        }
+
+        .rules ul {
+            margin-left: 20px;
+            color: #856404;
+        }
+
+        .rules li {
+            margin: 3px 0;
+            font-size: 14px;
+        }
+
+        .commitment-status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-complete { background: #d4edda; color: #155724; }
+        .status-missed { background: #f8d7da; color: #721c24; }
+        .status-pending { background: #fff3cd; color: #856404; }
+
+        .client-group-header {
+            background: #e9ecef;
+            font-weight: 700;
+            font-size: 15px;
+            color: #495057;
+        }
+
+        .client-group-header td {
+            padding: 12px !important;
+            border-top: 2px solid #dee2e6;
+        }
+
+        .campaign-row td:first-child {
+            padding-left: 40px;
+            color: #6c757d;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #28a745;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .read-only-notice {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            color: #856404;
+        }
+
+        /* Admin Panel Styles */
+        .admin-panel {
+            margin-top: 20px;
+        }
+
+        .user-table {
+            background: white;
+        }
+
+        .add-user-form {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        @media print {
+            body { background: white; }
+            .section { box-shadow: none; page-break-inside: avoid; }
+            .btn { display: none; }
+            header .header-right { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="loginPage" class="login-container">
+        <div class="login-box">
+            <h1>📊 Dashboard Login</h1>
+            <p>Weekly Multi-Client Account Control</p>
+            <p style="font-size: 14px;">Sign in with your authorized Google account</p>
+            
+            <div id="google-signin-button"></div>
+            
+            <div id="loginError" class="error-message"></div>
+            
+            <div id="loginLoading" class="loading" style="display: none;">
+                <div class="loading-spinner"></div>
+                <p>Authenticating...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard (Hidden until logged in) -->
+    <div id="dashboardPage" class="dashboard-container">
+        <div class="container">
+            <header>
+                <div class="header-left">
+                    <h1>📊 Weekly Multi-Client Account Control Dashboard</h1>
+                    <p style="color: #6c757d; margin-top: 5px;">15-30 minutes total for all clients</p>
+                    <div class="week-selector">
+                        <label><strong>Week of:</strong></label>
+                        <input type="date" id="weekDate" />
+                        <button class="btn btn-secondary" onclick="saveData()" id="saveBtn">💾 Save Data</button>
+                        <button class="btn btn-secondary" onclick="exportData()" id="exportBtn">📥 Export JSON</button>
+                        <button class="btn btn-secondary" onclick="window.print()">🖨️ Print</button>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="user-info">
+                        <span class="user-email" id="userEmail"></span>
+                        <span class="user-role" id="userRole"></span>
+                    </div>
+                    <button class="btn-logout" onclick="logout()">Logout</button>
+                </div>
+            </header>
+
+            <!-- Navigation Buttons -->
+            <div class="nav-buttons">
+                <div class="nav-btn active" onclick="showSection('summary')">
+                    <div class="nav-btn-title">📈 Historical Trends</div>
+                    <div class="nav-btn-desc">Week-by-week view</div>
+                </div>
+                <div class="nav-btn" onclick="showSection('portfolio')">
+                    <div class="nav-btn-title">PAGE 1: Portfolio Health</div>
+                    <div class="nav-btn-desc">Traffic light overview</div>
+                </div>
+                <div class="nav-btn" onclick="showSection('exceptions')">
+                    <div class="nav-btn-title">PAGE 2: Exceptions</div>
+                    <div class="nav-btn-desc">Issues to fix this week</div>
+                </div>
+                <div class="nav-btn" onclick="showSection('risks')">
+                    <div class="nav-btn-title">PAGE 3: Risks</div>
+                    <div class="nav-btn-desc">Early warning log</div>
+                </div>
+                <div class="nav-btn" onclick="showSection('relationships')">
+                    <div class="nav-btn-title">PAGE 4: Relationships</div>
+                    <div class="nav-btn-desc">Temperature check</div>
+                </div>
+                <div class="nav-btn" onclick="showSection('growth')">
+                    <div class="nav-btn-title">PAGE 5: Growth</div>
+                    <div class="nav-btn-desc">Commercial movement</div>
+                </div>
+                <div class="nav-btn" onclick="showSection('commitments')">
+                    <div class="nav-btn-title">PAGE 6: Commitments</div>
+                    <div class="nav-btn-desc">Accountability & escalations</div>
+                </div>
+                <div class="nav-btn" onclick="showSection('admin')" id="adminNavBtn" style="display: none;">
+                    <div class="nav-btn-title">⚙️ Admin Panel</div>
+                    <div class="nav-btn-desc">Manage users</div>
+                </div>
+            </div>
+
+            <!-- Read-only notice for Users -->
+            <div id="readOnlyNotice" class="read-only-notice" style="display: none;">
+                <strong>📖 Read-Only Access</strong>
+                <p style="margin-top: 5px;">You have view-only access. Contact your administrator to request edit permissions.</p>
+            </div>
+
+            <!-- SUMMARY PAGE: Historical Trends -->
+            <div class="section active" id="summary">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h2>📈 Historical Trends Summary</h2>
+                        <div class="section-purpose">Week-by-week portfolio health across all clients</div>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <label style="margin-right: 10px;"><strong>View by:</strong></label>
+                    <select id="summaryView" onchange="renderSummaryView()" style="width: auto; display: inline-block;">
+                        <option value="client">By Client (all campaigns grouped)</option>
+                        <option value="campaign">By Campaign (individual trends)</option>
+                        <option value="week">By Week (all clients & campaigns)</option>
+                    </select>
+                    <button class="btn btn-secondary" onclick="clearHistory()" id="clearHistoryBtn" style="margin-left: 20px;">🗑️ Clear History</button>
+                </div>
+
+                <div id="summaryContent"></div>
+
+                <div class="section-question">
+                    "How have our clients been trending over time?"
+                </div>
+            </div>
+
+            <!-- PAGE 1: Portfolio Health Overview -->
+            <div class="section" id="portfolio">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h2>PAGE 1: Portfolio Health Overview (All Clients)</h2>
+                        <div class="section-purpose">Where should your attention go this week?</div>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 15px; display: flex; gap: 10px; align-items: center;">
+                    <label><strong>View:</strong></label>
+                    <select id="portfolioViewMode" onchange="renderPortfolioTable()" style="width: auto;">
+                        <option value="all">All Campaigns (Flat View)</option>
+                        <option value="grouped">Grouped by Client</option>
+                    </select>
+                </div>
+
+                <table id="portfolioTable">
+                    <thead>
+                        <tr>
+                            <th>Client</th>
+                            <th>Campaign</th>
+                            <th style="text-align: center;">Commercial</th>
+                            <th style="text-align: center;">Ops</th>
+                            <th style="text-align: center;">Relationship</th>
+                            <th style="text-align: center;">Growth</th>
+                            <th style="text-align: center;">Overall</th>
+                            <th style="width: 80px;" id="portfolioActionsHeader"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="portfolioBody">
+                    </tbody>
+                </table>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-success" onclick="addPortfolioRow()" id="addPortfolioBtn">+ Add Client</button>
+                </div>
+
+                <div class="rules">
+                    <strong>Rules:</strong>
+                    <ul>
+                        <li>Traffic lights must change week-to-week if reality changes</li>
+                        <li>No explanation here — just signal</li>
+                    </ul>
+                </div>
+                
+                <div class="section-question">
+                    "Which accounts need intervention right now?"
+                </div>
+            </div>
+
+            <!-- PAGE 2: Weekly Exceptions Register -->
+            <div class="section" id="exceptions">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h2>PAGE 2: Weekly Exceptions Register (Across All Clients)</h2>
+                        <div class="section-purpose">Force focus.</div>
+                    </div>
+                </div>
+                
+                <table id="exceptionsTable">
+                    <thead>
+                        <tr>
+                            <th>Client</th>
+                            <th>Campaign</th>
+                            <th>Issue</th>
+                            <th>Severity</th>
+                            <th>Root Cause</th>
+                            <th>Action This Week</th>
+                            <th>Owner</th>
+                            <th style="width: 80px;" id="exceptionsActionsHeader"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="exceptionsBody">
+                    </tbody>
+                </table>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-success" onclick="addExceptionRow()" id="addExceptionBtn">+ Add Exception</button>
+                </div>
+
+                <div class="rules">
+                    <strong>Rules:</strong>
+                    <ul>
+                        <li>Only new or unresolved issues appear</li>
+                        <li>No historic storytelling</li>
+                        <li>Closed issues drop off</li>
+                    </ul>
+                </div>
+                
+                <div class="section-question">
+                    "What are we fixing this week?"
+                </div>
+            </div>
+
+            <!-- PAGE 3: Risk Early-Warning Log -->
+            <div class="section" id="risks">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h2>PAGE 3: Risk Early-Warning Log</h2>
+                        <div class="section-purpose">Look ahead, not back.</div>
+                    </div>
+                </div>
+                
+                <table id="risksTable">
+                    <thead>
+                        <tr>
+                            <th>Client</th>
+                            <th>Campaign</th>
+                            <th>Risk</th>
+                            <th>Time Horizon</th>
+                            <th>Likelihood</th>
+                            <th>Action</th>
+                            <th style="width: 80px;" id="risksActionsHeader"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="risksBody">
+                    </tbody>
+                </table>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-success" onclick="addRiskRow()" id="addRiskBtn">+ Add Risk</button>
+                </div>
+
+                <div class="rules">
+                    <strong>Rules:</strong>
+                    <ul>
+                        <li>Risks ≠ issues</li>
+                        <li>If it happens, it moves to Page 2 next week</li>
+                    </ul>
+                </div>
+                
+                <div class="section-question">
+                    "What could blindside us?"
+                </div>
+            </div>
+
+            <!-- PAGE 4: Relationship Temperature Check -->
+            <div class="section" id="relationships">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h2>PAGE 4: Relationship Temperature Check</h2>
+                        <div class="section-purpose">Political control.</div>
+                    </div>
+                </div>
+                
+                <table id="relationshipsTable">
+                    <thead>
+                        <tr>
+                            <th>Client</th>
+                            <th>Campaign</th>
+                            <th>Stakeholder</th>
+                            <th>Sentiment</th>
+                            <th>Change vs Last Week</th>
+                            <th>Action</th>
+                            <th style="width: 80px;" id="relationshipsActionsHeader"></th>
+                        </tr>
+                    </thead>
+                </table>
+                <tbody id="relationshipsBody">
+                </tbody>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-success" onclick="addRelationshipRow()" id="addRelationshipBtn">+ Add Stakeholder</button>
+                </div>
+
+                <div class="rules">
+                    <strong>Rules:</strong>
+                    <ul>
+                        <li>Sentiment must move (static = lazy)</li>
+                        <li>Only exceptions discussed</li>
+                    </ul>
+                </div>
+                
+                <div class="section-question">
+                    "Are relationships deteriorating before performance does?"
+                </div>
+            </div>
+
+            <!-- PAGE 5: Growth & Commercial Movement -->
+            <div class="section" id="growth">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h2>PAGE 5: Growth & Commercial Movement (Very Light)</h2>
+                        <div class="section-purpose">Prevent stagnation.</div>
+                    </div>
+                </div>
+                
+                <table id="growthTable">
+                    <thead>
+                        <tr>
+                            <th>Client</th>
+                            <th>Campaign</th>
+                            <th>Opportunity</th>
+                            <th>Movement This Week</th>
+                            <th>Blocker</th>
+                            <th style="width: 80px;" id="growthActionsHeader"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="growthBody">
+                    </tbody>
+                </table>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-success" onclick="addGrowthRow()" id="addGrowthBtn">+ Add Opportunity</button>
+                </div>
+
+                <div class="rules">
+                    <strong>Rules:</strong>
+                    <ul>
+                        <li>No movement = red flag</li>
+                        <li>Growth is expected to move every week (even small steps)</li>
+                    </ul>
+                </div>
+                
+                <div class="section-question">
+                    "Are we actively pushing growth or just talking about it?"
+                </div>
+            </div>
+
+            <!-- PAGE 6: Weekly Commitments & Escalations -->
+            <div class="section" id="commitments">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h2>PAGE 6: Weekly Commitments & Escalations</h2>
+                        <div class="section-purpose">Accountability.</div>
+                    </div>
+                </div>
+                
+                <h3>Commitments Made Last Week</h3>
+                <table id="pastCommitmentsTable">
+                    <thead>
+                        <tr>
+                            <th>Commitment</th>
+                            <th style="width: 150px;">Status</th>
+                            <th>Comment</th>
+                            <th style="width: 80px;" id="pastCommitmentsActionsHeader"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="pastCommitmentsBody">
+                    </tbody>
+                </table>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-success" onclick="addPastCommitmentRow()" id="addPastCommitmentBtn">+ Add Past Commitment</button>
+                </div>
+
+                <h3>New Commitments This Week</h3>
+                <table id="newCommitmentsTable">
+                    <thead>
+                        <tr>
+                            <th>Commitment</th>
+                            <th>Owner</th>
+                            <th style="width: 150px;">Due</th>
+                            <th style="width: 80px;" id="newCommitmentsActionsHeader"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="newCommitmentsBody">
+                    </tbody>
+                </table>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-success" onclick="addNewCommitmentRow()" id="addNewCommitmentBtn">+ Add New Commitment</button>
+                </div>
+
+                <h3>Escalations Required</h3>
+                <p style="color: #6c757d; margin-bottom: 10px; font-style: italic;">"What I need your help with this week"</p>
+                <textarea id="escalations" rows="4" placeholder="Enter escalations here..."></textarea>
+            </div>
+
+            <!-- ADMIN PANEL (Admin only) -->
+            <div class="section" id="admin">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h2>⚙️ Admin Panel - User Management</h2>
+                        <div class="section-purpose">Manage user access and permissions</div>
+                    </div>
+                </div>
+
+                <div class="add-user-form">
+                    <h3>Add New User</h3>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="newUserEmail" placeholder="user@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Role</label>
+                        <select id="newUserRole">
+                            <option value="User">User (Read-only)</option>
+                            <option value="Super User">Super User (Edit access)</option>
+                            <option value="Admin">Admin (Full access)</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-success" onclick="addNewUser()">+ Add User</button>
+                </div>
+
+                <h3>Current Users</h3>
+                <table class="user-table">
+                    <thead>
+                        <tr>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Added Date</th>
+                            <th style="width: 200px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== CONFIGURATION =====
+        const SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE'; // Replace with your deployed script URL
+        const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID_HERE'; // Optional: for Google Sign-In button styling
+
+        // ===== GLOBAL STATE =====
+        let currentUser = null;
+        let dashboardData = {
+            weekDate: '',
+            portfolio: [],
+            exceptions: [],
+            risks: [],
+            relationships: [],
+            growth: [],
+            pastCommitments: [],
+            newCommitments: [],
+            escalations: ''
+        };
+        let weeklyArchive = [];
+
+        // ===== INITIALIZATION =====
+        window.onload = function() {
+            initGoogleSignIn();
+        };
+
+        function initGoogleSignIn() {
+            google.accounts.id.initialize({
+                client_id: GOOGLE_CLIENT_ID,
+                callback: handleCredentialResponse
+            });
+
+            google.accounts.id.renderButton(
+                document.getElementById('google-signin-button'),
+                { 
+                    theme: 'outline', 
+                    size: 'large',
+                    text: 'signin_with',
+                    width: 250
+                }
+            );
+
+            // Also enable one-tap sign-in
+            google.accounts.id.prompt();
+        }
+
+        async function handleCredentialResponse(response) {
+            showLoading('loginLoading');
+            hideError();
+
+            try {
+                // Decode the JWT token to get user email
+                const payload = JSON.parse(atob(response.credential.split('.')[1]));
+                const userEmail = payload.email;
+
+                // Authenticate with backend
+                const authResult = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'authenticate',
+                        email: userEmail
+                    })
+                });
+
+                const authData = await authResult.json();
+
+                if (authData.success) {
+                    currentUser = authData;
+                    await loginSuccess();
+                } else {
+                    showError(authData.message || 'You are not authorized to access this dashboard.');
+                }
+            } catch (error) {
+                showError('Authentication failed. Please try again.');
+                console.error('Auth error:', error);
+            } finally {
+                hideLoading('loginLoading');
+            }
+        }
+
+        async function loginSuccess() {
+            // Update UI with user info
+            document.getElementById('userEmail').textContent = currentUser.email;
+            document.getElementById('userRole').textContent = currentUser.role;
+
+            // Show/hide elements based on permissions
+            applyPermissions();
+
+            // Load data
+            await loadDashboardData();
+            await loadArchiveData();
+
+            // Switch to dashboard
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('dashboardPage').style.display = 'block';
+
+            // Set current week
+            setCurrentWeek();
+            renderAllTables();
+            renderSummaryView();
+        }
+
+        function applyPermissions() {
+            const perms = currentUser.permissions;
+
+            // Show admin panel if admin
+            if (perms.canManageUsers) {
+                document.getElementById('adminNavBtn').style.display = 'block';
+                loadUsers();
+            }
+
+            // Show read-only notice if user role
+            if (!perms.canEdit) {
+                document.getElementById('readOnlyNotice').style.display = 'block';
+            }
+
+            // Disable all edit controls for read-only users
+            const editableElements = [
+                'saveBtn', 'exportBtn', 'clearHistoryBtn',
+                'addPortfolioBtn', 'addExceptionBtn', 'addRiskBtn',
+                'addRelationshipBtn', 'addGrowthBtn', 'addPastCommitmentBtn',
+                'addNewCommitmentBtn'
+            ];
+
+            editableElements.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.disabled = !perms.canEdit;
+            });
+
+            // Hide action columns for read-only
+            if (!perms.canDelete) {
+                const headers = [
+                    'portfolioActionsHeader', 'exceptionsActionsHeader', 
+                    'risksActionsHeader', 'relationshipsActionsHeader',
+                    'growthActionsHeader', 'pastCommitmentsActionsHeader',
+                    'newCommitmentsActionsHeader'
+                ];
+                headers.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.style.display = 'none';
+                });
+            }
+        }
+
+        function logout() {
+            google.accounts.id.disableAutoSelect();
+            currentUser = null;
+            document.getElementById('dashboardPage').style.display = 'none';
+            document.getElementById('loginPage').style.display = 'flex';
+        }
+
+        function showError(message) {
+            const errorEl = document.getElementById('loginError');
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+        }
+
+        function hideError() {
+            document.getElementById('loginError').style.display = 'none';
+        }
+
+        function showLoading(elementId) {
+            document.getElementById(elementId).style.display = 'block';
+        }
+
+        function hideLoading(elementId) {
+            document.getElementById(elementId).style.display = 'none';
+        }
+
+        // ===== DATA MANAGEMENT =====
+        async function saveData() {
+            if (!currentUser.permissions.canEdit) {
+                alert('You do not have permission to edit data.');
+                return;
+            }
+
+            dashboardData.weekDate = document.getElementById('weekDate').value;
+            dashboardData.escalations = document.getElementById('escalations').value;
+
+            if (!dashboardData.weekDate) {
+                alert('⚠️ Please select a week date before saving.');
+                return;
+            }
+
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'saveData',
+                        userEmail: currentUser.email,
+                        ...dashboardData
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('✅ Data saved successfully!');
+                    await loadArchiveData();
+                    renderSummaryView();
+                } else {
+                    alert('❌ Error: ' + (result.error || 'Failed to save'));
+                }
+            } catch (error) {
+                alert('❌ Error saving data: ' + error.message);
+            }
+        }
+
+        async function loadDashboardData() {
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'loadData',
+                        userEmail: currentUser.email
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data) {
+                    dashboardData = data;
+                    document.getElementById('weekDate').value = data.weekDate || '';
+                    document.getElementById('escalations').value = data.escalations || '';
+                }
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
+
+        async function loadArchiveData() {
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'loadArchive',
+                        userEmail: currentUser.email
+                    })
+                });
+
+                weeklyArchive = await response.json();
+            } catch (error) {
+                console.error('Error loading archive:', error);
+            }
+        }
+
+        function exportData() {
+            const dataStr = JSON.stringify(dashboardData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `dashboard-${dashboardData.weekDate || 'export'}.json`;
+            link.click();
+        }
+
+        function clearHistory() {
+            if (!currentUser.permissions.canDelete) {
+                alert('You do not have permission to clear history.');
+                return;
+            }
+
+            if (confirm('Are you sure you want to clear all historical data? This cannot be undone.')) {
+                weeklyArchive = [];
+                renderSummaryView();
+                alert('✅ History cleared (note: data in Google Sheets is not deleted)');
+            }
+        }
+
+        // ===== NAVIGATION =====
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            document.getElementById(sectionId).classList.add('active');
+            event.currentTarget.classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        function setCurrentWeek() {
+            const today = new Date();
+            const monday = new Date(today);
+            monday.setDate(today.getDate() - today.getDay() + 1);
+            document.getElementById('weekDate').value = monday.toISOString().split('T')[0];
+        }
+
+        // ===== TRAFFIC LIGHTS =====
+        function createTrafficLight(currentStatus, index, type) {
+            const isDisabled = !currentUser.permissions.canEdit;
+            const cursor = isDisabled ? 'default' : 'pointer';
+            const onclick = isDisabled ? '' : `onclick="cycleStatus(${index}, '${type}', this)"`;
+            
+            return `<div class="status-indicator status-${currentStatus}" 
+                         ${onclick}
+                         style="cursor: ${cursor};"
+                         title="${isDisabled ? 'Read-only' : 'Click to change'}"></div>`;
+        }
+
+        function cycleStatus(index, type, element) {
+            if (!currentUser.permissions.canEdit) return;
+
+            const statuses = ['green', 'amber', 'red'];
+            const classes = element.className.split(' ');
+            const currentStatus = classes[1].replace('status-', '');
+            const currentIndex = statuses.indexOf(currentStatus);
+            const nextStatus = statuses[(currentIndex + 1) % 3];
+            
+            element.className = `status-indicator status-${nextStatus}`;
+            
+            const field = type.split('-')[1];
+            if (type.startsWith('portfolio')) {
+                dashboardData.portfolio[index][field] = nextStatus;
+                
+                if (field !== 'overall') {
+                    calculateOverallStatus(index);
+                    renderPortfolioTable();
+                }
+            }
+        }
+
+        function calculateOverallStatus(index) {
+            const row = dashboardData.portfolio[index];
+            const statuses = [row.commercial, row.ops, row.relationship, row.growth];
+            
+            if (statuses.includes('red')) {
+                row.overall = 'red';
+            } else if (statuses.includes('amber')) {
+                row.overall = 'amber';
+            } else {
+                row.overall = 'green';
+            }
+        }
+
+        function createStaticTrafficLight(status) {
+            return `<div class="status-indicator status-${status}" style="cursor: default;"></div>`;
+        }
+
+        // ===== PORTFOLIO FUNCTIONS =====
+        function addPortfolioRow() {
+            if (!currentUser.permissions.canEdit) return;
+
+            const newRow = {
+                client: '',
+                campaign: '',
+                commercial: 'green',
+                ops: 'green',
+                relationship: 'green',
+                growth: 'green',
+                overall: 'green'
+            };
+            dashboardData.portfolio.push(newRow);
+            const newIndex = dashboardData.portfolio.length - 1;
+            calculateOverallStatus(newIndex);
+            renderPortfolioTable();
+        }
+
+        function deletePortfolioRow(index) {
+            if (!currentUser.permissions.canDelete) return;
+
+            if (confirm('Delete this client/campaign?')) {
+                dashboardData.portfolio.splice(index, 1);
+                renderPortfolioTable();
+            }
+        }
+
+        function renderPortfolioTable() {
+            const tbody = document.getElementById('portfolioBody');
+            const viewMode = document.getElementById('portfolioViewMode')?.value || 'all';
+            const canEdit = currentUser.permissions.canEdit;
+            const canDelete = currentUser.permissions.canDelete;
+            tbody.innerHTML = '';
+            
+            if (viewMode === 'grouped') {
+                const clientGroups = {};
+                dashboardData.portfolio.forEach((row, index) => {
+                    const client = row.client || 'Unnamed Client';
+                    if (!clientGroups[client]) {
+                        clientGroups[client] = [];
+                    }
+                    clientGroups[client].push({ ...row, originalIndex: index });
+                });
+
+                Object.keys(clientGroups).sort().forEach(clientName => {
+                    const campaigns = clientGroups[clientName];
+                    
+                    const headerTr = document.createElement('tr');
+                    headerTr.className = 'client-group-header';
+                    headerTr.innerHTML = `
+                        <td colspan="8">${clientName} (${campaigns.length} campaign${campaigns.length !== 1 ? 's' : ''})</td>
+                    `;
+                    tbody.appendChild(headerTr);
+
+                    campaigns.forEach(campaign => {
+                        calculateOverallStatus(campaign.originalIndex);
+                        
+                        const tr = document.createElement('tr');
+                        tr.className = 'campaign-row';
+                        tr.innerHTML = `
+                            <td></td>
+                            <td><input type="text" value="${campaign.campaign || ''}" onchange="updatePortfolioField(${campaign.originalIndex}, 'campaign', this.value)" placeholder="Campaign name" ${!canEdit ? 'disabled' : ''}></td>
+                            <td class="traffic-light-cell">${createTrafficLight(campaign.commercial, campaign.originalIndex, 'portfolio-commercial')}</td>
+                            <td class="traffic-light-cell">${createTrafficLight(campaign.ops, campaign.originalIndex, 'portfolio-ops')}</td>
+                            <td class="traffic-light-cell">${createTrafficLight(campaign.relationship, campaign.originalIndex, 'portfolio-relationship')}</td>
+                            <td class="traffic-light-cell">${createTrafficLight(campaign.growth, campaign.originalIndex, 'portfolio-growth')}</td>
+                            <td class="traffic-light-cell"><div class="status-indicator status-${dashboardData.portfolio[campaign.originalIndex].overall}" style="cursor: default;" title="Auto-calculated from other statuses"></div></td>
+                            <td style="${!canDelete ? 'display:none' : ''}"><button class="btn btn-danger" onclick="deletePortfolioRow(${campaign.originalIndex})" ${!canDelete ? 'disabled' : ''}>Delete</button></td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                });
+            } else {
+                dashboardData.portfolio.forEach((row, index) => {
+                    calculateOverallStatus(index);
+                    
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><input type="text" value="${row.client}" onchange="updatePortfolioField(${index}, 'client', this.value)" ${!canEdit ? 'disabled' : ''}></td>
+                        <td><input type="text" value="${row.campaign || ''}" onchange="updatePortfolioField(${index}, 'campaign', this.value)" ${!canEdit ? 'disabled' : ''}></td>
+                        <td class="traffic-light-cell">${createTrafficLight(row.commercial, index, 'portfolio-commercial')}</td>
+                        <td class="traffic-light-cell">${createTrafficLight(row.ops, index, 'portfolio-ops')}</td>
+                        <td class="traffic-light-cell">${createTrafficLight(row.relationship, index, 'portfolio-relationship')}</td>
+                        <td class="traffic-light-cell">${createTrafficLight(row.growth, index, 'portfolio-growth')}</td>
+                        <td class="traffic-light-cell"><div class="status-indicator status-${row.overall}" style="cursor: default;" title="Auto-calculated from other statuses"></div></td>
+                        <td style="${!canDelete ? 'display:none' : ''}"><button class="btn btn-danger" onclick="deletePortfolioRow(${index})" ${!canDelete ? 'disabled' : ''}>Delete</button></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        }
+
+        function updatePortfolioField(index, field, value) {
+            if (!currentUser.permissions.canEdit) return;
+            dashboardData.portfolio[index][field] = value;
+        }
+
+        // ===== EXCEPTIONS FUNCTIONS =====
+        function addExceptionRow() {
+            if (!currentUser.permissions.canEdit) return;
+
+            dashboardData.exceptions.push({
+                client: '',
+                campaign: '',
+                issue: '',
+                severity: 'High',
+                rootCause: '',
+                action: '',
+                owner: ''
+            });
+            renderExceptionsTable();
+        }
+
+        function deleteExceptionRow(index) {
+            if (!currentUser.permissions.canDelete) return;
+
+            if (confirm('Delete this exception?')) {
+                dashboardData.exceptions.splice(index, 1);
+                renderExceptionsTable();
+            }
+        }
+
+        function renderExceptionsTable() {
+            const tbody = document.getElementById('exceptionsBody');
+            const canEdit = currentUser.permissions.canEdit;
+            const canDelete = currentUser.permissions.canDelete;
+            tbody.innerHTML = '';
+            
+            dashboardData.exceptions.forEach((row, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><input type="text" value="${row.client}" onchange="dashboardData.exceptions[${index}].client = this.value" ${!canEdit ? 'disabled' : ''}></td>
+                    <td><input type="text" value="${row.campaign || ''}" onchange="dashboardData.exceptions[${index}].campaign = this.value" ${!canEdit ? 'disabled' : ''}></td>
+                    <td><input type="text" value="${row.issue}" onchange="dashboardData.exceptions[${index}].issue = this.value" ${!canEdit ? 'disabled' : ''}></td>
+                    <td>
+                        <select onchange="dashboardData.exceptions[${index}].severity = this.value" ${!canEdit ? 'disabled' : ''}>
+                            <option ${row.severity === 'High' ? 'selected' : ''}>High</option>
+                            <option ${row.severity === 'Medium' ? 'selected' : ''}>Medium</option>
+                            <option ${row.severity === 'Low' ? 'selected' : ''}>Low</option>
+                        </select>
+                    </td>
+                    <td><input type="text" value="${row.rootCause}" onchange="dashboardData.exceptions[${index}].rootCause = this.value" ${!canEdit ? 'disabled' : ''}></td>
+                    <td><input type="text" value="${row.action}" onchange="dashboardData.exceptions[${index}].action = this.value" ${!canEdit ? 'disabled' : ''}></td>
+                    <td><input type="text" value="${row.owner}" onchange="dashboardData.exceptions[${index}].owner = this.value" ${!canEdit ? 'disabled' : ''}></td>
+                    <td style="${!canDelete ? 'display:none' : ''}"><button class="btn btn-danger" onclick="deleteExceptionRow(${index})" ${!canDelete ? 'disabled' : ''}>Delete</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // ===== RISKS FUNCTIONS =====
+        function addRiskRow() {
+            if (!currentUser.permissions.canEdit) return;
+
+            dashboardData.risks.push({
+                client: '',
+                campaign: '',
+                risk: '',
+                timeHorizon: '60-90 days',
+                likelihood: 'Medium',
+                action: ''
+            });
+            renderRisksTable();
+        }
+
+        function deleteRiskRow(index) {
+            if (!currentUser.permissions.canDelete) return;
+
+            if (confirm('Delete this risk?')) {
+                dashboardData.risks.splice(index, 1);
+                renderRisksTable();
+            }
+        }
+
+        function renderRisksTable() {
+            const tbody = document.getElementById('risksBody');
+            const canEdit = currentUser.permissions.canEdit;
+            const canDelete = currentUser.permissions.canDelete;
+            tbody.innerHTML = '';
+            
+            dashboardData.risks.forEach((row, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><input type="text" value="${row.client}" onchange="dashboardData.risks[${index}].client = this.value" ${!canEdit ? 'disabled' : ''}></td>
+                    <td><input type="text" value="${row.campaign || ''}" onchange="dashboardData.risks[${index}].campaign = this.value" ${!canEdit ? 'disabled' : ''}></td>
+                    <td><input type="text" value="${row.risk}" onchange="dashboardData.risks[${index}].risk = this.value" ${!canEdit ? 'disabled' : ''}></td>
+                    <td>
+                        <select onchange="dashboardData.risks[${index}].timeHorizon = this.value" ${!canEdit ? 'disabled' : ''}>
+                            <option ${row.timeHorizon === '0-30 days' ? 'selected' : ''}>0-30 days</option>
+                            <option ${row.timeHorizon === '30-60 days' ? 'selected' : ''}>30-60 days</option>
+                            <option ${row.timeHorizon === '60-90 days' ? 'selected' : ''}>60-90 days</option>
+                            <option ${row.timeHorizon === '90+ days' ? 'selected' : ''}>90+ days</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select onchange="dashboardData.risks[${index}].likelihood = this.value" ${!canEdit ? 'disabled' : ''}>
+                            <option ${row.likelihood === 'High' ? 'selected' : ''}>High</option>
+                            <option ${row.likelihood === 'Medium' ? 'selected' : ''}>Medium</option>
+                            <option ${row.likelihood === 'Low' ? 'selected' : ''}>Low</option>
+                        </select>
+                    </td>
+                    <td><input type="text" value="${row.action}" onchange="dashboardData.risks[${index}].action = this.value" ${!canEdit ? 'disabled' : ''}></td>
+                    <td style="${!canDelete ? 'display:none' : ''}"><button class="btn btn-danger" onclick="deleteRiskRow(${index})" ${!canDelete ? 'disabled' : ''}>Delete</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // ===== RELATIONSHIPS FUNCTIONS =====
+        function addRelationshipRow() {
+            if (!currentUser.permissions.canEdit) return;
+
+            dashboardData.relationships.push({
+                client: '',
+                campaign: '',
+                stakeholder: '',
+                sentiment: 'Neutral',
+                change: '→',
+                action: ''
+            });
+            renderRelationshipsTable();
+        }
+
+        function deleteRelationshipRow(index) {
+            if (!currentUser.permissions.canDelete) return;
+
+            if (confirm('Delete this stakeholder?')) {
+                dashboardData.relationships.splice(index, 1);
+                renderRelationshipsTable();
+            }
+        }
+
+        function renderRelationshipsTable() {
+            const tbody = document.getElementById('relationshipsBody');
+            const canEdit = currentUser.permissions.canEdit;
+            const canDelete = currentUser.permissions.canDelete;
+            tbody.innerHTML = '';
+            
+            dashboardData.relationships.forEach((row, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><input type="text" value="${row.client}" onchange="dashboardData.relationships[${index}].client = this.value" ${!canEdit ? 'disabled' : ''}></td>
+                    <td><input type="text" value="${row.campaign || ''}" onchange="dashboardData.relationships[${index}].campaign = this.value" ${!canEdit ? 'disabled' : ''}></td>
+                    <td><input type="text" value="${row.stakeholder}" onchange="dashboardData.relationships[${index}].stakeholder = this.value" ${!canEdit ? 'disabled' : ''}></td>
+                    <td>
+                        <select onchange="dashboardData.relationships[${index}].sentiment = this.value" ${!canEdit ? 'disabled' : ''}>
+                            <option ${row.sentiment === 'Positive' ? 'selected' : ''}>Positive</option>
+                            <option ${row.sentiment === 'Neutral' ? 'selected' : ''}>Neutral</option>
+                            <option ${row.sentiment === 'Negative' ? 'selected' : ''}>Negative</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select onchange="dashboardData.relationships[${index}].change = this.value" ${!canEdit ? 'disabled' : ''}>
+                            <option ${row.change === '↑' ? 'selected' : ''}>↑ Improving</option>
+                            <option ${row.change === '→' ? 'selected' : ''}>→ Stable</option>
+                            <option ${row.change === '↓' ? 'selected' : ''}>↓ Deteriorating</option>
+                        </select>
+                    </td>
+                    <td><input type="text" value="${row.action}" onchange="dashboardData.relationships[${index}].action = this.value" ${!canEdit ? 'disabled' : ''}></td>
+                    <td style="${!canDelete ? 'display:none' : ''}"><button class="btn btn-danger" onclick="deleteRelationshipRow(${index})" ${!canDelete ? 'disabled' : ''}>Delete</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // ===== GROWTH FUNCTIONS =====
+        function addGrowthRow() {
+            if (!currentUser.permissions.canEdit) return;
+
+            dashboardData.growth.push({
+                client: '',
+                campaign: '',
+                opportunity: '',
+                movement: '',
+                blocker: ''
+            });
+            renderGrowthTable();
+        }
+
+        function deleteGrowthRow(index) {
+            if (!currentUser.permissions.canDelete) return;
+
+            if (confirm('Delete this opportunity?')) {
+                dashboardData.growth.splice(index, 1);
+                renderGrowthTable();
+            }
+        }
+
+        function renderGrowthTable() {
+            const tbody = document.getElementById('growthBody');
+            const canEdit = currentUser.permissions.canEdit;
+            const canDelete = currentUser.permissions.canDelete;
+            tbody.innerHTML = '';
+            
+            dashboardData.growth.forEach((row, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><input type="text" value="${row.client}" onchange="dashboardData.growth[${index}].client = this.value" ${!canEdit ? 'disabled' : ''}></td>
+                    <td><input type="text" value="${row.campaign || ''}" onchange="dashboardData.growth[${index}].campaign = this.value" ${!canEdit ? 'disabled' : ''}></td>
+                    <td><input type="text" value="${row.opportunity}" onchange="dashboardData.growth[${index}].opportunity = this.value" ${!canEdit ? 'disabled' : ''}></td>
+                    <td><input type="text" value="${row.movement}" onchange="dashboardData.growth[${index}].movement = this.value" ${!canEdit ? 'disabled' : ''}></td>
+                    <td><input type="text" value="${row.blocker}" onchange="dashboardData.growth[${index}].blocker = this.value" ${!canEdit ? 'disabled' : ''}></td>
+                    <td style="${!canDelete ? 'display:none' : ''}"><button class="btn btn-danger" onclick="deleteGrowthRow(${index})" ${!canDelete ? 'disabled' : ''}>Delete</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // ===== COMMITMENTS FUNCTIONS =====
+        function addPastCommitmentRow() {
+            if (!currentUser.permissions.canEdit) return;
+
+            dashboardData.pastCommitments.push({
+                commitment: '',
+                status: 'Pending',
+                comment: ''
+            });
+            renderPastCommitmentsTable();
+        }
+
+        function deletePastCommitmentRow(index) {
+            if (!currentUser.permissions.canDelete) return;
+
+            if (confirm('Delete this commitment?')) {
+                dashboardData.pastCommitments.splice(index, 1);
+                renderPastCommitmentsTable();
+            }
+        }
+
+        function renderPastCommitmentsTable() {
+            const tbody = document.getElementById('pastCommitmentsBody');
+            const canEdit = currentUser.permissions.canEdit;
+            const canDelete = currentUser.permissions.canDelete;
+            tbody.innerHTML = '';
+            
+            dashboardData.pastCommitments.forEach((row, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><input type="text" value="${row.commitment}" onchange="dashboardData.pastCommitments[${index}].commitment = this.value" ${!canEdit ? 'disabled' : ''}></td>
+                    <td>
+                        <select onchange="dashboardData.pastCommitments[${index}].status = this.value" ${!canEdit ? 'disabled' : ''}>
+                            <option ${row.status === 'Complete' ? 'selected' : ''}>Complete</option>
+                            <option ${row.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                            <option ${row.status === 'Missed' ? 'selected' : ''}>Missed</option>
+                        </select>
+                    </td>
+                    <td><input type="text" value="${row.comment}" onchange="dashboardData.pastCommitments[${index}].comment = this.value" ${!canEdit ? 'disabled' : ''}></td>
+                    <td style="${!canDelete ? 'display:none' : ''}"><button class="btn btn-danger" onclick="deletePastCommitmentRow(${index})" ${!canDelete ? 'disabled' : ''}>Delete</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function addNewCommitmentRow() {
+            if (!currentUser.permissions.canEdit) return;
+
+            dashboardData.newCommitments.push({
+                commitment: '',
+                owner: '',
+                due: ''
+            });
+            renderNewCommitmentsTable();
+        }
+
+        function deleteNewCommitmentRow(index) {
+            if (!currentUser.permissions.canDelete) return;
+
+            if (confirm('Delete this commitment?')) {
+                dashboardData.newCommitments.splice(index, 1);
+                renderNewCommitmentsTable();
+            }
+        }
+
+        function renderNewCommitmentsTable() {
+            const tbody = document.getElementById('newCommitmentsBody');
+            const canEdit = currentUser.permissions.canEdit;
+            const canDelete = currentUser.permissions.canDelete;
+            tbody.innerHTML = '';
+            
+            dashboardData.newCommitments.forEach((row, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><input type="text" value="${row.commitment}" onchange="dashboardData.newCommitments[${index}].commitment = this.value" ${!canEdit ? 'disabled' : ''}></td>
+                    <td><input type="text" value="${row.owner}" onchange="dashboardData.newCommitments[${index}].owner = this.value" ${!canEdit ? 'disabled' : ''}></td>
+                    <td><input type="text" value="${row.due}" onchange="dashboardData.newCommitments[${index}].due = this.value" ${!canEdit ? 'disabled' : ''}></td>
+                    <td style="${!canDelete ? 'display:none' : ''}"><button class="btn btn-danger" onclick="deleteNewCommitmentRow(${index})" ${!canDelete ? 'disabled' : ''}>Delete</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderAllTables() {
+            renderPortfolioTable();
+            renderExceptionsTable();
+            renderRisksTable();
+            renderRelationshipsTable();
+            renderGrowthTable();
+            renderPastCommitmentsTable();
+            renderNewCommitmentsTable();
+        }
+
+        // ===== SUMMARY VIEW =====
+        function renderSummaryView() {
+            const view = document.getElementById('summaryView').value;
+            const container = document.getElementById('summaryContent');
+
+            if (weeklyArchive.length === 0) {
+                container.innerHTML = '<p style="color: #6c757d; padding: 20px; text-align: center;">No historical data yet. Save your first week to start tracking trends.</p>';
+                return;
+            }
+
+            if (view === 'client') {
+                renderByClientGrouped(container);
+            } else if (view === 'campaign') {
+                renderByCampaign(container);
+            } else {
+                renderByWeek(container);
+            }
+        }
+
+        function renderByClientGrouped(container) {
+            const clientData = {};
+            
+            weeklyArchive.forEach(week => {
+                week.portfolio.forEach(entry => {
+                    if (entry.client) {
+                        if (!clientData[entry.client]) {
+                            clientData[entry.client] = {};
+                        }
+                        const campaignKey = entry.campaign || '(No Campaign)';
+                        if (!clientData[entry.client][campaignKey]) {
+                            clientData[entry.client][campaignKey] = [];
+                        }
+                        clientData[entry.client][campaignKey].push({
+                            week: week.weekDate,
+                            ...entry
+                        });
+                    }
+                });
+            });
+
+            if (Object.keys(clientData).length === 0) {
+                container.innerHTML = '<p style="color: #6c757d; padding: 20px;">No client data available.</p>';
+                return;
+            }
+
+            let html = '';
+
+            Object.keys(clientData).sort().forEach(clientName => {
+                html += `<div style="margin-bottom: 40px; padding: 20px; background: #f8f9fa; border-radius: 8px;">`;
+                html += `<h3 style="color: #495057; margin-bottom: 20px; border-bottom: 2px solid #dee2e6; padding-bottom: 10px;">${clientName}</h3>`;
+
+                Object.keys(clientData[clientName]).sort().forEach(campaignName => {
+                    const entries = clientData[clientName][campaignName];
+                    
+                    html += `
+                        <div style="margin-bottom: 25px;">
+                            <h4 style="color: #6c757d; margin-bottom: 10px; font-size: 16px;">${campaignName}</h4>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Week</th>
+                                        <th style="text-align: center;">Commercial</th>
+                                        <th style="text-align: center;">Ops</th>
+                                        <th style="text-align: center;">Relationship</th>
+                                        <th style="text-align: center;">Growth</th>
+                                        <th style="text-align: center;">Overall</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                    `;
+
+                    entries.forEach(entry => {
+                        html += `
+                            <tr>
+                                <td><strong>${formatDate(entry.week)}</strong></td>
+                                <td class="traffic-light-cell">${createStaticTrafficLight(entry.commercial)}</td>
+                                <td class="traffic-light-cell">${createStaticTrafficLight(entry.ops)}</td>
+                                <td class="traffic-light-cell">${createStaticTrafficLight(entry.relationship)}</td>
+                                <td class="traffic-light-cell">${createStaticTrafficLight(entry.growth)}</td>
+                                <td class="traffic-light-cell">${createStaticTrafficLight(entry.overall)}</td>
+                            </tr>
+                        `;
+                    });
+
+                    html += `
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                });
+
+                html += `</div>`;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function renderByCampaign(container) {
+            const allEntries = new Set();
+            weeklyArchive.forEach(week => {
+                week.portfolio.forEach(entry => {
+                    if (entry.client) {
+                        const key = `${entry.client}${entry.campaign ? ' - ' + entry.campaign : ''}`;
+                        allEntries.add(key);
+                    }
+                });
+            });
+
+            if (allEntries.size === 0) {
+                container.innerHTML = '<p style="color: #6c757d; padding: 20px;">No client data available.</p>';
+                return;
+            }
+
+            let html = '';
+            
+            Array.from(allEntries).sort().forEach(entryKey => {
+                html += `
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="color: #495057; margin-bottom: 15px;">${entryKey}</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Week</th>
+                                    <th style="text-align: center;">Commercial</th>
+                                    <th style="text-align: center;">Ops</th>
+                                    <th style="text-align: center;">Relationship</th>
+                                    <th style="text-align: center;">Growth</th>
+                                    <th style="text-align: center;">Overall</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                weeklyArchive.forEach(week => {
+                    week.portfolio.forEach(entry => {
+                        const currentKey = `${entry.client}${entry.campaign ? ' - ' + entry.campaign : ''}`;
+                        if (currentKey === entryKey) {
+                            html += `
+                                <tr>
+                                    <td><strong>${formatDate(week.weekDate)}</strong></td>
+                                    <td class="traffic-light-cell">${createStaticTrafficLight(entry.commercial)}</td>
+                                    <td class="traffic-light-cell">${createStaticTrafficLight(entry.ops)}</td>
+                                    <td class="traffic-light-cell">${createStaticTrafficLight(entry.relationship)}</td>
+                                    <td class="traffic-light-cell">${createStaticTrafficLight(entry.growth)}</td>
+                                    <td class="traffic-light-cell">${createStaticTrafficLight(entry.overall)}</td>
+                                </tr>
+                            `;
+                        }
+                    });
+                });
+
+                html += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function renderByWeek(container) {
+            let html = '';
+
+            weeklyArchive.forEach(week => {
+                html += `
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="color: #495057; margin-bottom: 15px;">Week of ${formatDate(week.weekDate)}</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Client</th>
+                                    <th>Campaign</th>
+                                    <th style="text-align: center;">Commercial</th>
+                                    <th style="text-align: center;">Ops</th>
+                                    <th style="text-align: center;">Relationship</th>
+                                    <th style="text-align: center;">Growth</th>
+                                    <th style="text-align: center;">Overall</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                week.portfolio.forEach(entry => {
+                    if (entry.client) {
+                        html += `
+                            <tr>
+                                <td><strong>${entry.client}</strong></td>
+                                <td>${entry.campaign || '-'}</td>
+                                <td class="traffic-light-cell">${createStaticTrafficLight(entry.commercial)}</td>
+                                <td class="traffic-light-cell">${createStaticTrafficLight(entry.ops)}</td>
+                                <td class="traffic-light-cell">${createStaticTrafficLight(entry.relationship)}</td>
+                                <td class="traffic-light-cell">${createStaticTrafficLight(entry.growth)}</td>
+                                <td class="traffic-light-cell">${createStaticTrafficLight(entry.overall)}</td>
+                            </tr>
+                        `;
+                    }
+                });
+
+                html += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        // ===== ADMIN FUNCTIONS =====
+        async function loadUsers() {
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'getUsers',
+                        userEmail: currentUser.email
+                    })
+                });
+
+                const users = await response.json();
+                renderUsersTable(users);
+            } catch (error) {
+                console.error('Error loading users:', error);
+            }
+        }
+
+        function renderUsersTable(users) {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+
+            users.forEach(user => {
+                const tr = document.createElement('tr');
+                const isCurrentUser = user.email === currentUser.email;
+                
+                tr.innerHTML = `
+                    <td>${user.email}</td>
+                    <td>
+                        <select onchange="updateUserRole('${user.email}', this.value)" ${isCurrentUser ? 'disabled' : ''}>
+                            <option value="User" ${user.role === 'User' ? 'selected' : ''}>User</option>
+                            <option value="Super User" ${user.role === 'Super User' ? 'selected' : ''}>Super User</option>
+                            <option value="Admin" ${user.role === 'Admin' ? 'selected' : ''}>Admin</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select onchange="updateUserStatus('${user.email}', this.value)" ${isCurrentUser ? 'disabled' : ''}>
+                            <option value="Active" ${user.status === 'Active' ? 'selected' : ''}>Active</option>
+                            <option value="Inactive" ${user.status === 'Inactive' ? 'selected' : ''}>Inactive</option>
+                        </select>
+                    </td>
+                    <td>${formatDate(user.addedDate)}</td>
+                    <td>
+                        <button class="btn btn-danger" onclick="removeUser('${user.email}')" ${isCurrentUser ? 'disabled' : ''}>
+                            Remove
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function addNewUser() {
+            const email = document.getElementById('newUserEmail').value.trim();
+            const role = document.getElementById('newUserRole').value;
+
+            if (!email) {
+                alert('Please enter an email address');
+                return;
+            }
+
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'addUser',
+                        userEmail: currentUser.email,
+                        newUserEmail: email,
+                        newUserRole: role
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('✅ User added successfully!');
+                    document.getElementById('newUserEmail').value = '';
+                    loadUsers();
+                } else {
+                    alert('❌ Error: ' + (result.error || 'Failed to add user'));
+                }
+            } catch (error) {
+                alert('❌ Error adding user: ' + error.message);
+            }
+        }
+
+        async function updateUserRole(targetEmail, newRole) {
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'updateUser',
+                        userEmail: currentUser.email,
+                        targetEmail: targetEmail,
+                        updates: { role: newRole }
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('✅ User role updated!');
+                } else {
+                    alert('❌ Error: ' + (result.error || 'Failed to update'));
+                    loadUsers(); // Reload to reset
+                }
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+                loadUsers();
+            }
+        }
+
+        async function updateUserStatus(targetEmail, newStatus) {
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'updateUser',
+                        userEmail: currentUser.email,
+                        targetEmail: targetEmail,
+                        updates: { status: newStatus }
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('✅ User status updated!');
+                } else {
+                    alert('❌ Error: ' + (result.error || 'Failed to update'));
+                    loadUsers();
+                }
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+                loadUsers();
+            }
+        }
+
+        async function removeUser(targetEmail) {
+            if (!confirm(`Are you sure you want to remove ${targetEmail}?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'deleteUser',
+                        userEmail: currentUser.email,
+                        targetEmail: targetEmail
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('✅ User removed!');
+                    loadUsers();
+                } else {
+                    alert('❌ Error: ' + (result.error || 'Failed to remove user'));
+                }
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

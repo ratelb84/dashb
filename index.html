@@ -1381,35 +1381,40 @@
 
         // ===== INITIALIZATION =====
         window.onload = function() {
-            // TEMP: Bypass login for testing
-            currentUser = {
-                email: 'admin@test.com',
-                role: 'Admin',
-                dashboardAccess: 'local,international',
-                permissions: {
-                    canView: true,
-                    canEdit: true,
-                    canDelete: true,
-                    canManageUsers: true,
-                    canExport: true
-                }
-            };
-            
-            // TEMP: Skip selector, go straight to local dashboard
-            selectedDashboardType = 'local';
-            document.getElementById('loginPage').style.display = 'none';
-            document.getElementById('dashboardSelectorPage').style.display = 'none';
-            document.getElementById('dashboardPage').style.display = 'block';
-            
-            document.getElementById('userEmail').textContent = currentUser.email;
-            document.getElementById('userRole').textContent = currentUser.role;
-            document.querySelector('.header-brand h1').innerHTML = '🇿🇦 Local Client Management';
-            document.getElementById('adminNavBtn').style.display = 'flex';
-            
-            // Load config and data
-            loadConfiguration();
-            populateWeekSelector();
-            renderAllTables();
+            try {
+                // TEMP: Bypass login for testing
+                currentUser = {
+                    email: 'admin@test.com',
+                    role: 'Admin',
+                    dashboardAccess: 'local,international',
+                    permissions: {
+                        canView: true,
+                        canEdit: true,
+                        canDelete: true,
+                        canManageUsers: true,
+                        canExport: true
+                    }
+                };
+                
+                // TEMP: Skip selector, go straight to local dashboard
+                selectedDashboardType = 'local';
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('dashboardSelectorPage').style.display = 'none';
+                document.getElementById('dashboardPage').style.display = 'block';
+                
+                document.getElementById('userEmail').textContent = currentUser.email;
+                document.getElementById('userRole').textContent = currentUser.role;
+                document.querySelector('.header-brand h1').innerHTML = '🇿🇦 Local Client Management';
+                document.getElementById('adminNavBtn').style.display = 'flex';
+                
+                // Load config and data
+                loadConfiguration();
+                populateWeekSelector();
+                renderAllTables();
+            } catch(e) {
+                alert('Error loading page: ' + e.message);
+                console.error(e);
+            }
         };
 
         // Dashboard type selection
@@ -2317,11 +2322,6 @@
                     </td>
                     <td><input type="text" value="${row.action || ''}" onchange="dashboardData.risks[${index}].action = this.value" ${!canEdit ? 'disabled' : ''}></td>
                     <td style="${!canDelete ? 'display:none' : ''}"><button class="btn btn-danger" onclick="deleteRiskRow(${index})">Delete</button></td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-                    <td style="${!canDelete ? 'display:none' : ''}"><button class="btn btn-danger" onclick="deleteRiskRow(${index})" ${!canDelete ? 'disabled' : ''}>Delete</button></td>
                 `;
                 tbody.appendChild(tr);
             });

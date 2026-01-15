@@ -548,7 +548,7 @@
                 
                 <div class="form-group">
                     <label>Password</label>
-                    <input type="password" id="loginPassword" required placeholder="Enter your password">
+                    <input type="password" id="loginPassword" placeholder="Leave blank for first-time login">
                 </div>
                 
                 <button type="submit" class="login-btn" id="loginBtn">Login</button>
@@ -975,7 +975,7 @@
 
     <script>
         // ===== CONFIGURATION =====
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxPJd7YSURLIpVxHXzWydAKN9PnDV1gqqpOD-njtv71NEu07VWxQmf-lsLrjVi8kPDr/exec'; // Replace with your deployed script URL
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzd5qWpcdodkO32JWKHdMGne-tj5T3BQMrzxoQvtZprcj_zGyPALL_aGoJYqqee6v8w/exec'; // Replace with your deployed script URL
 
         // ===== GLOBAL STATE =====
         let currentUser = null;
@@ -1014,7 +1014,13 @@
                 
                 if (authData.success) {
                     currentUser = authData;
-                    await loginSuccess();
+                    
+                    // Check if password setup is required
+                    if (authData.requirePasswordSetup) {
+                        await promptPasswordSetup();
+                    } else {
+                        await loginSuccess();
+                    }
                 } else {
                     showError(authData.message || 'Invalid email or password');
                 }
@@ -1024,6 +1030,43 @@
             } finally {
                 document.getElementById('loginBtn').disabled = false;
                 document.getElementById('loginLoading').style.display = 'none';
+            }
+        }
+
+        async function promptPasswordSetup() {
+            const newPassword = prompt('Welcome! Please set your password:\n\n(Choose a secure password you\'ll remember)');
+            
+            if (!newPassword) {
+                showError('Password setup cancelled. Please try again.');
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                showError('Password must be at least 6 characters. Please try again.');
+                return;
+            }
+
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'setOwnPassword',
+                        userEmail: currentUser.email,
+                        newPassword: newPassword
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('✅ Password set successfully! Please login again with your new password.');
+                    logout();
+                } else {
+                    showError('Failed to set password: ' + (result.error || 'Unknown error'));
+                }
+            } catch (error) {
+                showError('Error setting password: ' + error.message);
             }
         }
 

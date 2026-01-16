@@ -1668,8 +1668,15 @@
 
         async function loadArchiveData() {
             try {
-                const url = `${SCRIPT_URL}?action=loadAllPortfolioWeeks&userEmail=${encodeURIComponent(currentUser.email)}`;
-                const response = await fetch(url);
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'loadAllPortfolioWeeks',
+                        userEmail: currentUser.email,
+                        dashboardType: selectedDashboardType
+                    })
+                });
                 weeklyArchive = await response.json();
                 if (!Array.isArray(weeklyArchive)) {
                     weeklyArchive = [];
@@ -1994,8 +2001,16 @@
             
             // Check if data already exists for this week
             try {
-                const checkUrl = `${SCRIPT_URL}?action=loadPortfolio&userEmail=${encodeURIComponent(currentUser.email)}&weekDate=${encodeURIComponent(weekDate)}`;
-                const checkResponse = await fetch(checkUrl);
+                const checkResponse = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'loadPortfolio',
+                        userEmail: currentUser.email,
+                        weekDate: weekDate,
+                        dashboardType: selectedDashboardType
+                    })
+                });
                 const existingData = await checkResponse.json();
                 
                 if (existingData && Array.isArray(existingData) && existingData.length > 0) {
@@ -2006,22 +2021,43 @@
                 console.error('Error checking existing data:', error);
             }
             
+            // Show saving indicator
+            const saveBtn = document.querySelector('#portfolio .btn-success');
+            const originalText = saveBtn.textContent;
+            saveBtn.textContent = '⏳ Saving...';
+            saveBtn.disabled = true;
+            
             try {
-                const url = `${SCRIPT_URL}?action=savePortfolio&userEmail=${encodeURIComponent(currentUser.email)}&weekDate=${encodeURIComponent(weekDate)}&data=${encodeURIComponent(JSON.stringify(dashboardData.portfolio))}`;
-                const response = await fetch(url);
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'savePortfolio',
+                        userEmail: currentUser.email,
+                        weekDate: weekDate,
+                        dashboardType: selectedDashboardType,
+                        data: dashboardData.portfolio
+                    })
+                });
                 const result = await response.json();
                 
                 if (result.success) {
                     document.getElementById('weekStatus').innerHTML = `✅ Saved for week of ${weekDate} at ${new Date().toLocaleTimeString()}`;
+                    weekIsLocked = true;
+                    disablePortfolioEditing(true);
                     alert('✅ Week data saved successfully!');
                     
                     // Reload archive data to update historical trends
                     await loadArchiveData();
                     renderSummaryView();
                 } else {
+                    saveBtn.textContent = originalText;
+                    saveBtn.disabled = false;
                     alert('❌ Error: ' + (result.error || 'Failed to save'));
                 }
             } catch (error) {
+                saveBtn.textContent = originalText;
+                saveBtn.disabled = false;
                 alert('❌ Error saving: ' + error.message);
             }
         }
@@ -2031,18 +2067,26 @@
             const weekDate = document.getElementById('weekDate').value;
             if (!weekDate) return;
             
+            document.getElementById('weekStatus').innerHTML = '⏳ Loading...';
+            
             try {
-                const url = `${SCRIPT_URL}?action=loadPortfolio&userEmail=${encodeURIComponent(currentUser.email)}&weekDate=${encodeURIComponent(weekDate)}`;
-                const response = await fetch(url);
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'loadPortfolio',
+                        userEmail: currentUser.email,
+                        weekDate: weekDate,
+                        dashboardType: selectedDashboardType
+                    })
+                });
                 const data = await response.json();
                 
                 if (data && Array.isArray(data) && data.length > 0) {
                     dashboardData.portfolio = data;
                     document.getElementById('weekStatus').innerHTML = `🔒 Data for week of ${weekDate} is locked (already saved)`;
-                    // Disable save button for this week
                     disablePortfolioEditing(true);
                 } else {
-                    // No data for this week - start fresh
                     dashboardData.portfolio = [];
                     document.getElementById('weekStatus').innerHTML = `📝 New week - enter data and save`;
                     disablePortfolioEditing(false);
@@ -2052,6 +2096,7 @@
             } catch (error) {
                 console.error('Error loading week data:', error);
                 dashboardData.portfolio = [];
+                document.getElementById('weekStatus').innerHTML = '❌ Error loading data';
                 renderPortfolioTable();
             }
         }

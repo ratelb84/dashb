@@ -1999,26 +1999,17 @@
                 return;
             }
             
-            // Check if data already exists for this week
-            try {
-                const checkResponse = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        action: 'loadPortfolio',
-                        userEmail: currentUser.email,
-                        weekDate: weekDate,
-                        dashboardType: selectedDashboardType
-                    })
-                });
-                const existingData = await checkResponse.json();
-                
-                if (existingData && Array.isArray(existingData) && existingData.length > 0) {
-                    alert('❌ Data already exists for week of ' + weekDate + '\n\nYou cannot overwrite historical data. Please select a different week.');
-                    return;
-                }
-            } catch (error) {
-                console.error('Error checking existing data:', error);
+            // FAST CHECK: Use local archive data first (no network request)
+            const existsLocally = weeklyArchive.some(w => w.weekDate === weekDate);
+            if (existsLocally) {
+                alert('❌ Data already exists for week of ' + weekDate + '\n\nYou cannot overwrite historical data. Please select a different week.');
+                return;
+            }
+            
+            // Also check if week is already locked
+            if (weekIsLocked) {
+                alert('❌ This week is already locked.');
+                return;
             }
             
             // Show saving indicator
@@ -2036,7 +2027,8 @@
                         userEmail: currentUser.email,
                         weekDate: weekDate,
                         dashboardType: selectedDashboardType,
-                        data: dashboardData.portfolio
+                        data: dashboardData.portfolio,
+                        checkDuplicate: true  // Tell backend to check for duplicates
                     })
                 });
                 const result = await response.json();
@@ -2045,11 +2037,19 @@
                     document.getElementById('weekStatus').innerHTML = `✅ Saved for week of ${weekDate} at ${new Date().toLocaleTimeString()}`;
                     weekIsLocked = true;
                     disablePortfolioEditing(true);
-                    alert('✅ Week data saved successfully!');
                     
-                    // Reload archive data to update historical trends
-                    await loadArchiveData();
+                    // Add to local archive immediately (no need to reload)
+                    weeklyArchive.unshift({
+                        weekDate: weekDate,
+                        portfolio: dashboardData.portfolio
+                    });
+                    
+                    alert('✅ Week data saved successfully!');
                     renderSummaryView();
+                } else if (result.duplicate) {
+                    alert('❌ Data already exists for week of ' + weekDate + '\n\nYou cannot overwrite historical data.');
+                    saveBtn.textContent = originalText;
+                    saveBtn.disabled = false;
                 } else {
                     saveBtn.textContent = originalText;
                     saveBtn.disabled = false;
